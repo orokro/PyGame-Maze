@@ -48,7 +48,7 @@ class Camera(WorldEntity):
 
 		# world scale
 		# we'll say some arbitary pixel amount is 1 world coordinate, e.g. 100 pixels = 1 unit
-		self._worldScale = 128
+		self.worldScale = 128
 
 		# not sure if I plan on supporting this, but ill leave it here just in case
 		# how much we are zooming
@@ -85,7 +85,27 @@ class Camera(WorldEntity):
 		posRelativeToCamera = self.pos - pos
 
 		# convert to pixels:
-		posRelativeToCameraInPixels = posRelativeToCamera * self._worldScale
+		posRelativeToCameraInPixels = posRelativeToCamera * self.worldScale
 
 		# add to center of screen to get final screen coordinates
 		return (self._center.x + posRelativeToCameraInPixels[0], self._center.y + posRelativeToCameraInPixels[1])
+
+
+	# helper function to get the bounds of the camera
+	def getCameraBounds(self):
+		"""Gets the top/bottom/left/right postion of the camera in world units
+
+		Returns:
+			dict: a dictionary with top/bottom/left/right values
+		"""
+
+		return {
+			"top": self.pos.y - (self._center.y / 128),
+			"bottom": self.pos.y + (self._center.y / 128),
+			"left": self.pos.x - (self._center.x / 128),
+			"right": self.pos.x + (self._center.x / 128),
+		}
+
+	@property
+	def center(self):
+		return self._center

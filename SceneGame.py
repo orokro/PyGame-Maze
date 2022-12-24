@@ -10,6 +10,9 @@
 # we're gonna use pygame for our rendering, etc
 import pygame
 
+# for rendering map
+from MapRenderer import MapRenderer
+
 # import Scene since we finna use that
 from Scene import Scene
 
@@ -35,10 +38,14 @@ class GameScreen(Scene):
 		self.camera = Camera(self, win)
 
 		# make a new player object
-		self.player = Player(self, win, 100, 100, 0)
+		self.player = Player(self, win, 50, 50, 0)
 
 		# move camera to player:
 		self.camera.moveTo(self.player.pos)
+
+		# create new map renderer & load level one map
+		self.map = MapRenderer(self, win)
+		self.map.loadMap('./levels/level_02/map.png')
 
 		# we'll hard code title in this file, we dont need to pass it in
 		super().__init__(game, win, "Game Play Screen")
@@ -85,7 +92,7 @@ class GameScreen(Scene):
 		self.player.checkPlayerInput(recentEvents)
 
 		# move camera to player:
-		# self.camera.moveTo(self.player.pos)
+		self.camera.moveTo(self.player.pos)
 
 
 	# method for rendering scene
@@ -98,6 +105,9 @@ class GameScreen(Scene):
 
 		# draw our background of the title screen
 		self._win.fill((0, 0, 0))
+
+		# draw map before player & other stuff on top
+		self.map.drawMap()
 
 		# draw our player
 		self.player.draw()
