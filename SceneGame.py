@@ -85,7 +85,7 @@ class GameScreen(Scene):
 		self.player.checkPlayerInput(recentEvents)
 
 		# move camera to player:
-		self.camera.moveTo(self.player.pos)
+		# self.camera.moveTo(self.player.pos)
 
 
 	# method for rendering scene

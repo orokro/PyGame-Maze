@@ -50,7 +50,7 @@ class Player(WorldEntity):
 		self.MOVE_SPEED = .1
 
 		# animation settings
-		self._animationWalkCycleTime = 0
+		self._animationWalkCycleBlend = 0
 
 		# set up the pygame resources we'll need for our player
 		self._setupPygame()
@@ -69,11 +69,13 @@ class Player(WorldEntity):
 			"gun": pygame.image.load('./img/space_gun.png'),			
 		}
 
+		leadOffset = 0
+
 		# hard coded offsets for the invidual pieces
-		self._headOffset = pygame.Vector2(41, 41)
-		self._torsoOffset = pygame.Vector2(60, 60)
-		self._feetOffset = pygame.Vector2(39, 39)
-		self._gunOffset = pygame.Vector2(19, 19)
+		self._headOffset = pygame.Vector2(41, 41 + leadOffset)
+		self._torsoOffset = pygame.Vector2(60, 60 + leadOffset)
+		self._feetOffset = pygame.Vector2(39, 39 + leadOffset)
+		self._gunOffset = pygame.Vector2(19, 19 + leadOffset)
 
 
 
@@ -84,6 +86,10 @@ class Player(WorldEntity):
 		Args:
 			direction (Number): must be 1 or -1 for left or right, respecitvely
 		"""
+
+		# increase this over time, max out at 10
+		if(self._animationWalkCycleBlend < 10):
+			self._animationWalkCycleBlend = 10
 
 		# adjust our rotation angle
 		self.rot += (direction * self.ROT_SPEED_IN_DEGREES)
@@ -104,9 +110,9 @@ class Player(WorldEntity):
 			direction (Number): either -1 or 1 for backward / forward. Can be scalar
 		"""
 
-		# increase our animation frame
-		# TODO: rethink this animation
-		self._animationWalkCycleTime += 1
+		# increase this over time, max out at 10
+		if(self._animationWalkCycleBlend < 10):
+			self._animationWalkCycleBlend = 10
 
 		# use geometry to determine movement
 		
@@ -196,16 +202,36 @@ class Player(WorldEntity):
 		# find where on screen we should be relative to the camera
 		screenPos = self._scene.camera.getScreenPos(self.pos)
 		
+		# always decrease this over time, till we hit 0
+		if(self._animationWalkCycleBlend > 0):
+			self._animationWalkCycleBlend -= 1
+
+		# normalize walk cycle blend value
+		aniWalkCycleBlendNormalised = (self._animationWalkCycleBlend/10.0)
+
+		# use the games time in miliseconds + 
+		sineTime = pygame.time.get_ticks() * .01
+
+		# calculate rotational offsets for feet, torso and head in degrees
+		feetRotOffset = math.sin(sineTime) * 10 * aniWalkCycleBlendNormalised
+		torsoRotOffset = math.sin(sineTime) * -10 * aniWalkCycleBlendNormalised
+		headRotOffset = math.cos(sineTime) * 7 * aniWalkCycleBlendNormalised +(math.sin(sineTime*0.1) * 5)
+		
+		# we'll also always scale the torso on a mild sine curve to imply breathing
+		torsoScalar = 1.0 + (math.sin(sineTime * 0.17) * 0.05)
+		newTorsoOffset = self._torsoOffset * torsoScalar
+		newSizeVector2 = newTorsoOffset * 2
+		imgTorsoScaled = pygame.transform.scale(self._images["torso"], newSizeVector2)
+
 		# while the gun is rotated facing the same direction as the player
 		# it also needs it's own rotated X/Y offset, so lets calculate that before we draw everying else
-		gunRadius = 60
-		gunRotationFromPlayer = (self.rot + 140) * (math.pi / 180)
+		gunRadius = 60 * torsoScalar
+		gunRotationFromPlayer = (self.rot + torsoRotOffset + 140) * (math.pi / 180)
 		gunPos = screenPos + pygame.Vector2(math.sin(gunRotationFromPlayer) * gunRadius, math.cos(gunRotationFromPlayer) * gunRadius)
 
 		# rotate bit to screen. ORDER MATTERS! bottom-to-top
-		self.blitRotateCenter(self._win, self._images["feet"], screenPos-self._feetOffset, self.rot)
-		self.blitRotateCenter(self._win, self._images["torso"], screenPos-self._torsoOffset, self.rot)
-		self.blitRotateCenter(self._win, self._images["head"], screenPos-self._headOffset, self.rot)
+		self.blitRotateCenter(self._win, self._images["feet"], screenPos-self._feetOffset, self.rot+feetRotOffset)
+		self.blitRotateCenter(self._win, imgTorsoScaled, screenPos-newTorsoOffset, self.rot+torsoRotOffset)
+		self.blitRotateCenter(self._win, self._images["head"], screenPos-self._headOffset, self.rot+headRotOffset)
 		self.blitRotateCenter(self._win, self._images["gun"], gunPos-self._gunOffset, self.rot)
 		
-
