@@ -13,6 +13,9 @@ import pygame
 # import Scene since we finna use that
 from Scene import Scene
 
+# import our camera class
+from Camera import Camera
+
 # Game screen scene, extends Scene
 class GameScreen(Scene):
 
@@ -24,6 +27,9 @@ class GameScreen(Scene):
 			game (MazeGame): reference to our main game isntance
 			win (Surface): pygame surface for rendering
 		"""
+
+		# make our camera we'll use for moving around our world
+		self._cam = Camera(self, win)
 
 		# we'll hard code title in this file, we dont need to pass it in
 		super().__init__(game, win, "Game Play Screen")

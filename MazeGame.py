@@ -45,6 +45,9 @@ class MazeGame:
 		# build our scenes
 		self._setupScenes()
 
+		# for debug: skip to game screen (past title screen)
+		self._sceneMgr.switchScene(1)
+		
 		# true until user quits or w/e
 		self._run = True
 
@@ -137,7 +140,7 @@ class MazeGame:
 	def startGame(self):
 		"""Setes scene to game scecne
 		"""
-		
+
 		# simply tell our scene manager to goto scene index 1
 		self._sceneMgr.switchScene(1)
 
