@@ -73,6 +73,10 @@ class SceneManager:
 		# if our arg is of type int, we'll treat it as an index and convert the var to a reference to the scene with that index
 		scene = self._scenes[sceneOrSceneIndex] if isinstance(sceneOrSceneIndex, int) else sceneOrSceneIndex
 			
+		# if our scene is already this scene, just gtfo
+		if(self._currentScene==scene):
+			return scene;
+
 		# call "exit" on our current scene, which is now the old scene
 		oldScene = self._currentScene
 		if(oldScene!=None):

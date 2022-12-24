@@ -33,6 +33,9 @@ class MazeGame:
 		# our resolution, hard coded here for meow
 		self._resolution = (900, 650)
 
+		# our target FPS, hard coded here for meow
+		self._targetFPS = 30
+
 		# set up pygame lib to create a window and etc
 		self._win = self._setupPyGame()
 
@@ -60,6 +63,9 @@ class MazeGame:
 		# create our window surface for rendering, with our hard-coded resolution, and our hard coded window title
 		win = pygame.display.set_mode(self._resolution)
 		pygame.display.set_caption("Monster Maze v0.00001 - Bg Greg")
+
+		# create a clock so we can use pygames framerate timing logic
+		self._pygameClock = pygame.time.Clock()
 
 		# return dat win
 		return win
@@ -107,14 +113,11 @@ class MazeGame:
 
 		# switch scenes via keypressed
 		if(keys[pygame.K_1]):
-			self.sceneMgr.switchScene(0)		
-			time.sleep(1)	
+			self.sceneMgr.switchScene(0)	
 		if(keys[pygame.K_2]):
 			self.sceneMgr.switchScene(1)
-			time.sleep(1)
 		if(keys[pygame.K_3]):
 			self.sceneMgr.switchScene(2)
-			time.sleep(1)
 
 		# quit
 		if(keys[pygame.K_q]):
@@ -129,7 +132,12 @@ class MazeGame:
 		# loop until this boolean is false, or we break the while
 		while(self._run):
 
-			# debug keys
+			# we'll lock/target our hardcoded FPS
+			# (FYI pygame clocks will automatically sleep the amount required to target a FPS)
+			self._pygameClock.tick(self._targetFPS)
+
+			# at a top level, handle some debug input
+			# (other scenes will handle input just for that scene)
 			self.debugInput()
 
 			# get our current screen, then call update and render on it

@@ -7,6 +7,9 @@
 	The class we export will extend the Scene base-class.
 """
 
+# we're gonna use pygame for our rendering, etc
+import pygame
+
 # import Scene since we finna use that
 from Scene import Scene
 
@@ -24,6 +27,10 @@ class TitleScreen(Scene):
 		# we'll hard code title in this file, we dont need to pass it in
 		super().__init__(game, win, "Title Screen")
 
+		# well load our just the picture for the title screen here, in this scene
+		self._images = {
+			"bg": pygame.image.load('./img/TitleScreen_BG.png')
+		}
 
 	# method called when we enter this scene
 	def sceneEnter(self):
@@ -68,4 +75,8 @@ class TitleScreen(Scene):
 		# do super stuffs, if any
 		super().render()
 
-		pass
+		# draw our background of the title screen
+		self._win.blit(self._images["bg"], (0, 0))
+		
+		# update the display
+		pygame.display.update()
