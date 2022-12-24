@@ -84,6 +84,9 @@ class GameScreen(Scene):
 		# update our player:
 		self.player.checkPlayerInput(recentEvents)
 
+		# move camera to player:
+		self.camera.moveTo(self.player.pos)
+
 
 	# method for rendering scene
 	def render(self):

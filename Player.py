@@ -69,6 +69,13 @@ class Player(WorldEntity):
 			"gun": pygame.image.load('./img/space_gun.png'),			
 		}
 
+		# hard coded offsets for the invidual pieces
+		self._headOffset = pygame.Vector2(41, 41)
+		self._torsoOffset = pygame.Vector2(60, 60)
+		self._feetOffset = pygame.Vector2(39, 39)
+		self._gunOffset = pygame.Vector2(19, 19)
+
+
 
 	# updates our rotation varaible (used for heading movement, and sprite rotation, etc)
 	def rotate(self, direction):
@@ -177,6 +184,8 @@ class Player(WorldEntity):
 		rotated_image = pygame.transform.rotate(image, angle)
 		new_rect = rotated_image.get_rect(center = image.get_rect(topleft = topleft).center)
 
+		# new_new_rect = (new_rect[0] - (rotated_image.get_width()//2), new_rect[1] - (rotated_image.get_height()//2))
+
 		# copy rotated image to surface
 		surface.blit(rotated_image, new_rect)
 
@@ -189,14 +198,14 @@ class Player(WorldEntity):
 		
 		# while the gun is rotated facing the same direction as the player
 		# it also needs it's own rotated X/Y offset, so lets calculate that before we draw everying else
-		gunRadius = 2
-		gunRotationFromPlayer = 45 * (math.pi / 180)
+		gunRadius = 60
+		gunRotationFromPlayer = (self.rot + 140) * (math.pi / 180)
 		gunPos = screenPos + pygame.Vector2(math.sin(gunRotationFromPlayer) * gunRadius, math.cos(gunRotationFromPlayer) * gunRadius)
 
 		# rotate bit to screen. ORDER MATTERS! bottom-to-top
-		self.blitRotateCenter(self._win, self._images["feet"], screenPos, self.rot)
-		self.blitRotateCenter(self._win, self._images["torso"], screenPos, self.rot)
-		self.blitRotateCenter(self._win, self._images["head"], screenPos, self.rot)
-		self.blitRotateCenter(self._win, self._images["gun"], gunPos, self.rot)
+		self.blitRotateCenter(self._win, self._images["feet"], screenPos-self._feetOffset, self.rot)
+		self.blitRotateCenter(self._win, self._images["torso"], screenPos-self._torsoOffset, self.rot)
+		self.blitRotateCenter(self._win, self._images["head"], screenPos-self._headOffset, self.rot)
+		self.blitRotateCenter(self._win, self._images["gun"], gunPos-self._gunOffset, self.rot)
 		
 
