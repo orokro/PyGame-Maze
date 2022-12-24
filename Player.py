@@ -1,0 +1,202 @@
+"""
+	Player.py
+	---------
+
+	In this file/module we'll define the main player class that stores and handles stuff like:
+
+	Players position
+	Players Rotation
+	Players animation state
+	Players health
+	Players amo
+	Players Input, etc
+
+"""
+
+# for dat geometry
+import math
+
+# pygame for Vector 2 & etc
+import pygame
+
+# we gonna extend this
+from WorldEntity import WorldEntity
+
+# main player Class
+class Player(WorldEntity):
+
+	# constructor
+	def __init__(self, scene, win, initialX=0, initialY=0, initialRot=0):
+		"""Constructs our player character
+
+		Args:
+			scene (Scene): The games scene we're in
+			win (Surface): pygame window surface we render to
+			initialX (int, optional): start x position. Defaults to 0.
+			initialY (int, optional): start y position. Defaults to 0.
+			initialRot (int, optional): start rotate. Defaults to 0.
+		"""
+
+		# call our super constructor
+		super().__init__(scene, win, initialX, initialY, initialRot)
+
+		# set some of our player specific properties
+		self._health = 100
+		self._ammo = 100
+		self._infAmmo = True
+
+		# some hard coded values
+		self.ROT_SPEED_IN_DEGREES = 10
+		self.MOVE_SPEED = .1
+
+		# animation settings
+		self._animationWalkCycleTime = 0
+
+		# set up the pygame resources we'll need for our player
+		self._setupPygame()
+
+
+	# initialize pygame stuff we'll need for our player characater
+	def _setupPygame(self):
+		"""Sets up pygame related objects we'll need for the character, so we can tidy up the constructor
+		"""
+
+		# load in our player images
+		self._images =  {
+			"head": pygame.image.load('./img/char_head.png'),
+			"torso": pygame.image.load('./img/char_torso.png'),
+			"feet": pygame.image.load('./img/char_lower.png'),
+			"gun": pygame.image.load('./img/space_gun.png'),			
+		}
+
+
+	# updates our rotation varaible (used for heading movement, and sprite rotation, etc)
+	def rotate(self, direction):
+		"""Rotates the player logically left (1) or right (-1), and udpates sprites
+
+		Args:
+			direction (Number): must be 1 or -1 for left or right, respecitvely
+		"""
+
+		# adjust our rotation angle
+		self.rot += (direction * self.ROT_SPEED_IN_DEGREES)
+
+		# make sure we're in bounds in degrees
+		while self.rot < 0:
+			self.rot += 360
+
+		# make sure always between 0 and 360
+		self.rot = (self.rot % 360)
+
+
+	# move / walk / run whatever the facing direction
+	def move(self, direction):
+		"""Moves (walks) the player either forward or backward
+
+		Args:
+			direction (Number): either -1 or 1 for backward / forward. Can be scalar
+		"""
+
+		# increase our animation frame
+		# TODO: rethink this animation
+		self._animationWalkCycleTime += 1
+
+		# use geometry to determine movement
+		
+		# convert our rotation from degrees to radians
+		rotInRadians = self.rot * (math.pi/180.0)
+
+		# get radius for movement, which is direction * our movement speed constant
+		movementRadius = direction * self.MOVE_SPEED
+
+		# make vector 2 with new heading
+		newPosComponent = pygame.Vector2(math.sin(rotInRadians) * movementRadius, math.cos(rotInRadians) *movementRadius)
+
+		# add to our position
+		self.pos = self.pos + newPosComponent
+
+
+	# fire gun
+	def fire(self):
+
+		# this'll do for now
+		print("bang!")
+
+
+	# public method called from our Scene to have the player handle input
+	def checkPlayerInput(self, keysDownEvents = []):
+		"""Checks input relevant to player
+
+		Args:
+			keysDownEvents (list, optional): List of key down events passed in from scene. Defaults to [].
+		"""
+
+		# while it's true we're passed in keydown events, we only care about that for firing
+		# we'll use the active keys for rotation and movement
+		activeKeys = pygame.key.get_pressed()
+
+		# left/a is rotate left:
+		if activeKeys[pygame.K_LEFT] or activeKeys[pygame.K_a]:
+			self.rotate(1)
+
+		# right/d is rotate right:
+		if activeKeys[pygame.K_RIGHT] or activeKeys[pygame.K_d]:
+			self.rotate(-1)
+
+		# up/w is walk forward
+		if activeKeys[pygame.K_UP] or activeKeys[pygame.K_w]:
+			self.move(1)
+
+		# down/s is walk backward
+		if activeKeys[pygame.K_DOWN] or activeKeys[pygame.K_s]:
+			self.move(-1)
+
+		# now that we're done with the active key logic we can check if fire was pressed
+		for event in keysDownEvents:
+			
+			# skip non key events
+			if(event.type==pygame.KEYDOWN):
+
+				# if its space, fire
+				if(event.key == pygame.K_SPACE):
+					self.fire()
+
+
+	# copied from SO, easy rotate on center script	
+	def blitRotateCenter(self, surface, image, topleft, angle):
+		"""Rotates pygame image surface on center
+
+		Args:
+			surafe (Surface): target pygame surface
+			image (Surface): source pygame surface image
+			topleft (Tuple): top left pos tuple
+			angle (Number): rotation angle
+		"""
+
+		# rotate the images
+		rotated_image = pygame.transform.rotate(image, angle)
+		new_rect = rotated_image.get_rect(center = image.get_rect(topleft = topleft).center)
+
+		# copy rotated image to surface
+		surface.blit(rotated_image, new_rect)
+
+
+	# draws player to screen
+	def draw(self):
+
+		# find where on screen we should be relative to the camera
+		screenPos = self._scene.camera.getScreenPos(self.pos)
+		
+		# while the gun is rotated facing the same direction as the player
+		# it also needs it's own rotated X/Y offset, so lets calculate that before we draw everying else
+		gunRadius = 2
+		gunRotationFromPlayer = 45 * (math.pi / 180)
+		gunPos = screenPos + pygame.Vector2(math.sin(gunRotationFromPlayer) * gunRadius, math.cos(gunRotationFromPlayer) * gunRadius)
+
+		# rotate bit to screen. ORDER MATTERS! bottom-to-top
+		self.blitRotateCenter(self._win, self._images["feet"], screenPos, self.rot)
+		self.blitRotateCenter(self._win, self._images["torso"], screenPos, self.rot)
+		self.blitRotateCenter(self._win, self._images["head"], screenPos, self.rot)
+		self.blitRotateCenter(self._win, self._images["gun"], gunPos, self.rot)
+		
+

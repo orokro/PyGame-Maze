@@ -15,43 +15,36 @@
 	So, in otherwords, this handles the logic around the games "camera", not actually rendering.
 """
 
+# pygame for Vector 2 & etc
+import pygame
+
+# we gonna extend this
+from WorldEntity import WorldEntity
+
 # main Camera cass
-class Camera:
+class Camera(WorldEntity):
 
 	# constructor
-	def __init__(self, scene, win):
-		"""Constructs the Camera objec
+	def __init__(self, scene, win, initialX=0, initialY=0):
+		"""Constructs the Camera object
 
 		Args:
 			scene (Scene): the game's scene we're in
 			win (Surface): the pygame render surface for our window
 		"""
 
-		# save reference to the scene we're in
-		# (We probably don't need to go all the way up to game reference)
-		self._scene = scene
-
-		# also save the window we're rendering in.
-		# NOTE: we COULD technically just access scene._win, but it's private and exposing it seems weird
-		self._win = win
+		# call super, we can ignore all params for now
+		super().__init__(scene, win, initialX, initialY)
 
 		# for now our window is non-resizable
 		# and TBH idk if pygame supports that
 		# and TBevenmoreH idk if I wanna support that
 		# so lets just get stuff out of the way
-		self._winW = win.get_width()
-		self._winH = win.get_height()
+		self._winW = self._win.get_width()
+		self._winH = self._win.get_height()
 
 		# center of screen is half W/H
-		self._centerX = self._winW // 2
-		self._centerY = self._winH // 2
-
-		# for debug
-		# print(f'Screen Center: {self._centerX}, {self._centerY}')
-
-		# initial pos for now
-		self.x = 0
-		self.y = 0
+		self._center = pygame.Vector2(self._winW // 2, self._winH // 2)
 
 		# world scale
 		# we'll say some arbitary pixel amount is 1 world coordinate, e.g. 100 pixels = 1 unit
@@ -63,17 +56,15 @@ class Camera:
 	
 
 	# public method to update camera position in game co-ordinates
-	def moveTo(self, x, y):
+	def moveTo(self, newPos):
 		"""public method to update camera position in game coordinates
 
 		Args:
-			x (Number): x pos of camera in game world
-			y (Number): y pos of camera in game world
+			newPos (Vector2): new pos, as pygame Vector2
 		"""
 
 		# update our position
-		self.x = x
-		self.y = y
+		self.pos = newPos
 
 	
 	# helper function to get screen coordinates of a tuple from our camera position
@@ -81,20 +72,20 @@ class Camera:
 		"""Gets where on screen an object should be in pixels, from it's position relative to the camera in world coordinates
 
 		Args:
-			pos (Tuple): (X, Y) tuple position
+			pos (Vector2): pygame Vector2 in game coordinates
 
 		Returns:
-			Typle: (X, Y) tuple in screen position pixels
+			Vector2: pygame Vector2 tuple in screen position pixels
 		"""
 
 		# our pos will be a tuple in game world coordinates
 		# however, instead of the top-left of the screen, we'll assume the center of the camera is 0,0
 
 		# so with that in mind, figure out where the position is relative to center of camera in world scale
-		posRelativeToCamera = (self.x - pos[0], self.y - pos[1])
+		posRelativeToCamera = self.pos - pos
 
 		# convert to pixels:
-		posRelativeToCameraInPixels = (posRelativeToCamera[0] * self._worldScale, posRelativeToCamera[1] * self._worldScale)
+		posRelativeToCameraInPixels = posRelativeToCamera * self._worldScale
 
 		# add to center of screen to get final screen coordinates
-		return (self._centerX + posRelativeToCameraInPixels[0], self._centerY + posRelativeToCameraInPixels[1])
+		return (self._center.x + posRelativeToCameraInPixels[0], self._center.y + posRelativeToCameraInPixels[1])

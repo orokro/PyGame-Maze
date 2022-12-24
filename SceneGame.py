@@ -16,6 +16,9 @@ from Scene import Scene
 # import our camera class
 from Camera import Camera
 
+# crucial: require the player /s
+from Player import Player
+
 # Game screen scene, extends Scene
 class GameScreen(Scene):
 
@@ -29,7 +32,13 @@ class GameScreen(Scene):
 		"""
 
 		# make our camera we'll use for moving around our world
-		self._cam = Camera(self, win)
+		self.camera = Camera(self, win)
+
+		# make a new player object
+		self.player = Player(self, win, 100, 100, 0)
+
+		# move camera to player:
+		self.camera.moveTo(self.player.pos)
 
 		# we'll hard code title in this file, we dont need to pass it in
 		super().__init__(game, win, "Game Play Screen")
@@ -67,7 +76,13 @@ class GameScreen(Scene):
 		# do super stuffs, if any
 		super().update()
 
-		pass
+		# get all the events that happened so we can pass to to things that might care
+		# NOTE: 1) this will clear the stack of events
+		# NOTE: 2) havnt each object loop over them is stupid, will need better event dispatch later
+		recentEvents = pygame.event.get(pygame.KEYDOWN)
+
+		# update our player:
+		self.player.checkPlayerInput(recentEvents)
 
 
 	# method for rendering scene
@@ -80,6 +95,10 @@ class GameScreen(Scene):
 
 		# draw our background of the title screen
 		self._win.fill((0, 0, 0))
-		
+
+		# draw our player
+		self.player.draw()
+
 		# update the display
 		pygame.display.update()
+
