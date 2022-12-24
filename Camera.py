@@ -48,7 +48,7 @@ class Camera(WorldEntity):
 
 		# world scale
 		# we'll say some arbitary pixel amount is 1 world coordinate, e.g. 100 pixels = 1 unit
-		self._worldScale = 100
+		self._worldScale = 128
 
 		# not sure if I plan on supporting this, but ill leave it here just in case
 		# how much we are zooming

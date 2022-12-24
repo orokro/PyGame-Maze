@@ -47,7 +47,7 @@ class Player(WorldEntity):
 
 		# some hard coded values
 		self.ROT_SPEED_IN_DEGREES = 10
-		self.MOVE_SPEED = .1
+		self.MOVE_SPEED = .08
 
 		# animation settings
 		self._animationWalkCycleBlend = 0
@@ -78,6 +78,14 @@ class Player(WorldEntity):
 		self._gunOffset = pygame.Vector2(19, 19 + leadOffset)
 
 
+	# our animation timer for walk cycle is set on (max)
+	def _enableWalkCycleAnimation(self):
+
+		# set to max, it will drain after keys are let go. max out at 10
+		if(self._animationWalkCycleBlend < 10):
+			self._animationWalkCycleBlend = 10
+
+
 	# updates our rotation varaible (used for heading movement, and sprite rotation, etc)
 	def rotate(self, direction):
 		"""Rotates the player logically left (1) or right (-1), and udpates sprites
@@ -86,9 +94,8 @@ class Player(WorldEntity):
 			direction (Number): must be 1 or -1 for left or right, respecitvely
 		"""
 
-		# increase this over time, max out at 10
-		if(self._animationWalkCycleBlend < 10):
-			self._animationWalkCycleBlend = 10
+		# sets our walk cycle animation to max
+		self._enableWalkCycleAnimation()
 
 		# adjust our rotation angle
 		self.rot += (direction * self.ROT_SPEED_IN_DEGREES)
@@ -102,30 +109,45 @@ class Player(WorldEntity):
 
 
 	# move / walk / run whatever the facing direction
-	def move(self, direction):
+	def move(self, direction, strafe=False):
 		"""Moves (walks) the player either forward or backward
 
 		Args:
 			direction (Number): either -1 or 1 for backward / forward. Can be scalar
+			strafe (bool, optional): set true to move perpendicular (add bonus 90 degrees)
 		"""
 
-		# increase this over time, max out at 10
-		if(self._animationWalkCycleBlend < 10):
-			self._animationWalkCycleBlend = 10
+		# sets our walk cycle animation to max
+		self._enableWalkCycleAnimation()
+
+		# ternary for straf modifier
+		strafeModifierAngle = 90 if (strafe==True) else 0
 
 		# use geometry to determine movement
 		
 		# convert our rotation from degrees to radians
-		rotInRadians = self.rot * (math.pi/180.0)
+		rotInRadians = (self.rot + strafeModifierAngle) * (math.pi/180.0)
 
 		# get radius for movement, which is direction * our movement speed constant
 		movementRadius = direction * self.MOVE_SPEED
 
 		# make vector 2 with new heading
-		newPosComponent = pygame.Vector2(math.sin(rotInRadians) * movementRadius, math.cos(rotInRadians) *movementRadius)
+		newPosComponent = pygame.Vector2(math.sin(rotInRadians) * movementRadius, math.cos(rotInRadians) * movementRadius)
 
 		# add to our position
 		self.pos = self.pos + newPosComponent
+
+
+	# strafe, like move but p e r p e n d i c u l a r
+	def strafe(self, direction):
+		"""Strafes the player (i.e. perpendicular movement to facing direction)
+
+		Args:
+			direction (Number): either -1 or 1 for strafing left/right, respectivelky
+		"""
+
+		# just call our move function with bonus parameter
+		self.move(direction, True)
 
 
 	# fire gun
@@ -147,13 +169,28 @@ class Player(WorldEntity):
 		# we'll use the active keys for rotation and movement
 		activeKeys = pygame.key.get_pressed()
 
-		# left/a is rotate left:
-		if activeKeys[pygame.K_LEFT] or activeKeys[pygame.K_a]:
-			self.rotate(1)
+		# if shift is not held, we rotate (as opposed to strafe)
+		if(activeKeys[pygame.K_LSHIFT]==False and activeKeys[pygame.K_RSHIFT]==False):
 
-		# right/d is rotate right:
-		if activeKeys[pygame.K_RIGHT] or activeKeys[pygame.K_d]:
-			self.rotate(-1)
+			# left/a is rotate left:
+			if activeKeys[pygame.K_LEFT] or activeKeys[pygame.K_a]:
+				self.rotate(1)
+
+			# right/d is rotate right:
+			if activeKeys[pygame.K_RIGHT] or activeKeys[pygame.K_d]:
+				self.rotate(-1)
+
+		# otherwise, one of the shifts was held, so maybe strafe instead:
+		else:
+
+			# left/a is strafe left:
+			if activeKeys[pygame.K_LEFT] or activeKeys[pygame.K_a]:
+				self.strafe(1)
+
+			# right/d is strafe right:
+			if activeKeys[pygame.K_RIGHT] or activeKeys[pygame.K_d]:
+				self.strafe(-1)
+			
 
 		# up/w is walk forward
 		if activeKeys[pygame.K_UP] or activeKeys[pygame.K_w]:
