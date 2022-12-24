@@ -63,10 +63,10 @@ class Player(WorldEntity):
 
 		# load in our player images
 		self._images =  {
-			"head": pygame.image.load('./img/char_head.png'),
-			"torso": pygame.image.load('./img/char_torso.png'),
-			"feet": pygame.image.load('./img/char_lower.png'),
-			"gun": pygame.image.load('./img/space_gun.png'),			
+			"head": pygame.image.load('./img/player/char_head.png'),
+			"torso": pygame.image.load('./img/player/char_torso.png'),
+			"feet": pygame.image.load('./img/player/char_lower.png'),
+			"gun": pygame.image.load('./img/player/space_gun.png'),			
 		}
 
 		leadOffset = 0
@@ -76,7 +76,6 @@ class Player(WorldEntity):
 		self._torsoOffset = pygame.Vector2(60, 60 + leadOffset)
 		self._feetOffset = pygame.Vector2(39, 39 + leadOffset)
 		self._gunOffset = pygame.Vector2(19, 19 + leadOffset)
-
 
 
 	# updates our rotation varaible (used for heading movement, and sprite rotation, etc)
