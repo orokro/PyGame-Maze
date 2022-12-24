@@ -13,7 +13,7 @@ import pygame
 # import Scene since we finna use that
 from Scene import Scene
 
-# Game screen scene
+# Game screen scene, extends Scene
 class GameScreen(Scene):
 
 	# constructor
@@ -24,7 +24,7 @@ class GameScreen(Scene):
 			game (MazeGame): reference to our main game isntance
 			win (Surface): pygame surface for rendering
 		"""
-		
+
 		# we'll hard code title in this file, we dont need to pass it in
 		super().__init__(game, win, "Game Play Screen")
 

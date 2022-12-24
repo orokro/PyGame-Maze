@@ -13,7 +13,7 @@ import pygame
 # import Scene since we finna use that
 from Scene import Scene
 
-# Game screen scene
+# Game screen scene, extends Scene
 class EndScreen(Scene):
 
 	# constructor

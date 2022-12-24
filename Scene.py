@@ -6,6 +6,12 @@
 	for the various Scenes in our project.
 
 	This Scene abstraction is unique to this project, and not part of pygame or anything.
+
+	NOTE:
+
+	This class is use more like an Interface than a base-class,
+
+	but we'll do some debug prints on some of methods, so not _just_ an Interface, etc.
 """
 
 # the Scene base class
