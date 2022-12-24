@@ -24,6 +24,7 @@ class GameScreen(Scene):
 			game (MazeGame): reference to our main game isntance
 			win (Surface): pygame surface for rendering
 		"""
+		
 		# we'll hard code title in this file, we dont need to pass it in
 		super().__init__(game, win, "Game Play Screen")
 

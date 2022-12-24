@@ -93,7 +93,8 @@ class SceneManager:
 
 
 	# getter function to explose w/e the current scene is
-	def getCurrentScene(self):
+	@property
+	def currentScene(self):
 		"""Simple helper getter to expose our current scene
 
 		Returns:

@@ -40,7 +40,7 @@ class MazeGame:
 		self._win = self._setupPyGame()
 
 		# create a scene manager for us to juggle the main sceens (title, game, ending)
-		self.sceneMgr = SceneManager(self)
+		self._sceneMgr = SceneManager(self)
 
 		# build our scenes
 		self._setupScenes()
@@ -77,13 +77,13 @@ class MazeGame:
 		"""
 
 		# construct our 3 main scenes, even though we'll only use one-at-a-time
-		self.sceneMgr.addScene(
+		self._sceneMgr.addScene(
 			TitleScreen(self, self._win)
 		)
-		self.sceneMgr.addScene(
+		self._sceneMgr.addScene(
 			GameScreen(self, self._win)
 		)
-		self.sceneMgr.addScene(
+		self._sceneMgr.addScene(
 			EndScreen(self, self._win)
 		)
 
@@ -99,12 +99,12 @@ class MazeGame:
 			# check if it's a quit-type message:
 			if event.type == pygame.QUIT:
 
-				# game no longer running
-				self._run = False
+				# game should quit
+				self.quitGame()
 
 		
 	# debug key input
-	def debugInput(self):
+	def _debugInput(self):
 		"""Checks some keys and does debug functions if detected
 		"""
 
@@ -113,15 +113,33 @@ class MazeGame:
 
 		# switch scenes via keypressed
 		if(keys[pygame.K_1]):
-			self.sceneMgr.switchScene(0)	
+			self._sceneMgr.switchScene(0)	
 		if(keys[pygame.K_2]):
-			self.sceneMgr.switchScene(1)
+			self._sceneMgr.switchScene(1)
 		if(keys[pygame.K_3]):
-			self.sceneMgr.switchScene(2)
+			self._sceneMgr.switchScene(2)
 
 		# quit
 		if(keys[pygame.K_q]):
-			self._run = False
+			self.quitGame()
+
+
+	# public method to let the game be quit
+	def quitGame(self):
+		"""Sets game to quit on next iteration of main loop
+		"""
+
+		# set our loop condition variable false
+		self._run = False
+
+
+	# goes from title scene to main game scene
+	def startGame(self):
+		"""Setes scene to game scecne
+		"""
+		
+		# simply tell our scene manager to goto scene index 1
+		self._sceneMgr.switchScene(1)
 
 
 	# our logical main-loop
@@ -138,10 +156,10 @@ class MazeGame:
 
 			# at a top level, handle some debug input
 			# (other scenes will handle input just for that scene)
-			self.debugInput()
+			self._debugInput()
 
 			# get our current screen, then call update and render on it
-			scene = self.sceneMgr.getCurrentScene()
+			scene = self._sceneMgr.currentScene
 
 			# if we have a current scene
 			if(scene!=None):
