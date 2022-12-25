@@ -38,7 +38,7 @@ class GameScreen(Scene):
 		self.camera = Camera(self, win)
 
 		# make a new player object
-		self.player = Player(self, win, 50, 50, 0)
+		self.player = Player(self, win, 18.5, 20, 0)
 
 		# move camera to player:
 		self.camera.moveTo(self.player.pos)

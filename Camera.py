@@ -88,7 +88,11 @@ class Camera(WorldEntity):
 		posRelativeToCameraInPixels = posRelativeToCamera * self.worldScale
 
 		# add to center of screen to get final screen coordinates
+		return self.center + posRelativeToCameraInPixels
+
+		# add to center of screen to get final screen coordinates
 		return (self._center.x + posRelativeToCameraInPixels[0], self._center.y + posRelativeToCameraInPixels[1])
+
 
 
 	# helper function to get the bounds of the camera

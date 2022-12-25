@@ -84,6 +84,10 @@ class MapRenderer:
 			# if its out of bounds (OoB), we return solid wall
 			return MapRenderer.DARK
 
+		# invert to picture coordinations
+		# pos.x = self._mapImage.get_width() - pos.x
+		# pos.y = self._mapImage.get_height() - pos.y
+		
 		# otherwise, check the color. For now, we'll just yse the R channel:
 		pixelRGB = tuple(self._mapImage.get_at((int(pos.x), int(pos.y))))
 		redChannel = pixelRGB[0]

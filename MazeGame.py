@@ -34,7 +34,7 @@ class MazeGame:
 		self._resolution = (900, 650)
 
 		# our target FPS, hard coded here for meow
-		self._targetFPS = 30
+		self._targetFPS = 60
 
 		# set up pygame lib to create a window and etc
 		self._win = self._setupPyGame()
@@ -47,7 +47,7 @@ class MazeGame:
 
 		# for debug: skip to game screen (past title screen)
 		self._sceneMgr.switchScene(1)
-		
+
 		# true until user quits or w/e
 		self._run = True
 

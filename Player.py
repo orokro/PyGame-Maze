@@ -18,6 +18,7 @@ import math
 
 # pygame for Vector 2 & etc
 import pygame
+from MapRenderer import MapRenderer
 
 # we gonna extend this
 from WorldEntity import WorldEntity
@@ -46,14 +47,17 @@ class Player(WorldEntity):
 		self._infAmmo = True
 
 		# some hard coded values
-		self.ROT_SPEED_IN_DEGREES = 10
-		self.MOVE_SPEED = .08
+		self.ROT_SPEED_IN_DEGREES = 5
+		self.MOVE_SPEED = .04
 
 		# animation settings
 		self._animationWalkCycleBlend = 0
 
 		# set up the pygame resources we'll need for our player
 		self._setupPygame()
+
+		# keep track of coillision points for debug
+		self.colPoints = []
 
 
 	# initialize pygame stuff we'll need for our player characater
@@ -88,7 +92,7 @@ class Player(WorldEntity):
 
 	# updates our rotation varaible (used for heading movement, and sprite rotation, etc)
 	def rotate(self, direction):
-		"""Rotates the player logically left (1) or right (-1), and udpates sprites
+		"""Rotates the player logically left (1) or right (-1)
 
 		Args:
 			direction (Number): must be 1 or -1 for left or right, respecitvely
@@ -134,8 +138,44 @@ class Player(WorldEntity):
 		# make vector 2 with new heading
 		newPosComponent = pygame.Vector2(math.sin(rotInRadians) * movementRadius, math.cos(rotInRadians) * movementRadius)
 
-		# add to our position
-		self.pos = self.pos + newPosComponent
+		# add to our position and get temporary new position
+		newPos = self.pos + newPosComponent
+
+		# collision check pos
+		self.pos = self._checkCollision(self.pos, newPos)
+
+		print(self.pos)
+
+	
+	def _checkCollision(self, oldPos, newPos):
+
+		return newPos
+
+		if(self._scene.map.getTileAtPixelPos(newPos) != MapRenderer.GROUND):
+			self.colPoints.append(newPos.copy())
+			return oldPos
+
+		# if either of these are not ground, reset x pos
+		if(self._scene.map.getTileAtPixelPos(newPos + pygame.Vector2(-1.55, 0)) != MapRenderer.GROUND):
+			self.colPoints.append(newPos.copy())
+			newPos.x = oldPos.x
+
+		if(self._scene.map.getTileAtPixelPos(newPos + pygame.Vector2( 1.55, 0)) != MapRenderer.GROUND):
+			self.colPoints.append(newPos.copy())
+			newPos.x = oldPos.x
+
+		# if either of these are not ground, reset y pos
+		if(self._scene.map.getTileAtPixelPos(newPos + pygame.Vector2(0, -1.55)) != MapRenderer.GROUND):
+			self.colPoints.append(newPos.copy())
+			newPos.y = oldPos.y
+
+		if(self._scene.map.getTileAtPixelPos(newPos + pygame.Vector2(0,  1.55)) != MapRenderer.GROUND):
+			self.colPoints.append(newPos.copy())
+			newPos.y = oldPos.y
+
+		# return adjusted pos
+		return newPos
+
 
 
 	# strafe, like move but p e r p e n d i c u l a r
@@ -232,6 +272,17 @@ class Player(WorldEntity):
 		surface.blit(rotated_image, new_rect)
 
 
+	def drawCollisions(self):
+
+		for colPoint in self.colPoints:
+			sp = self._scene.camera.getScreenPos(colPoint)
+			self._win.set_at((int(sp[0]), int(sp[1])), (255,0,0))
+			pygame.draw.circle(self._win, (255,0,0), (int(sp[0]), int(sp[1])), 5)
+
+
+		self.colPoints = []
+
+
 	# draws player to screen
 	def draw(self):
 
@@ -270,4 +321,6 @@ class Player(WorldEntity):
 		self.blitRotateCenter(self._win, imgTorsoScaled, screenPos-newTorsoOffset, self.rot+torsoRotOffset)
 		self.blitRotateCenter(self._win, self._images["head"], screenPos-self._headOffset, self.rot+headRotOffset)
 		self.blitRotateCenter(self._win, self._images["gun"], gunPos-self._gunOffset, self.rot)
+
+		self.drawCollisions()
 		
