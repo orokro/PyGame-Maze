@@ -18,7 +18,9 @@ import math
 
 # pygame for Vector 2 & etc
 import pygame
-from MapRenderer import MapRenderer
+
+# gonna need this for collision
+from Map import Map
 
 # we gonna extend this
 from WorldEntity import WorldEntity
@@ -48,7 +50,7 @@ class Player(WorldEntity):
 
 		# some hard coded values
 		self.ROT_SPEED_IN_DEGREES = 5
-		self.MOVE_SPEED = .04
+		self.MOVE_SPEED = 4
 
 		# animation settings
 		self._animationWalkCycleBlend = 0
@@ -139,12 +141,12 @@ class Player(WorldEntity):
 		newPosComponent = pygame.Vector2(math.sin(rotInRadians) * movementRadius, math.cos(rotInRadians) * movementRadius)
 
 		# add to our position and get temporary new position
-		newPos = self.pos + newPosComponent
+		newPos = self.pos - newPosComponent
 
 		# collision check pos
 		self.pos = self._checkCollision(self.pos, newPos)
 
-		print(self.pos)
+		# print(self.pos)
 
 	
 	def _checkCollision(self, oldPos, newPos):
@@ -294,9 +296,11 @@ class Player(WorldEntity):
 			self._animationWalkCycleBlend -= 1
 
 		# normalize walk cycle blend value
+		# this will result in a float between 1.0 and 0.0 (which decreses towards 0 over time)
+		# used to blend walking rotations in
 		aniWalkCycleBlendNormalised = (self._animationWalkCycleBlend/10.0)
 
-		# use the games time in miliseconds + 
+		# use the games time in miliseconds as basis for input to a sine curve eq
 		sineTime = pygame.time.get_ticks() * .01
 
 		# calculate rotational offsets for feet, torso and head in degrees
@@ -312,6 +316,7 @@ class Player(WorldEntity):
 
 		# while the gun is rotated facing the same direction as the player
 		# it also needs it's own rotated X/Y offset, so lets calculate that before we draw everying else
+		# (this is because the gun is its own sprite in the players hand, so its X/Y is the hand-pos)
 		gunRadius = 60 * torsoScalar
 		gunRotationFromPlayer = (self.rot + torsoRotOffset + 140) * (math.pi / 180)
 		gunPos = screenPos + pygame.Vector2(math.sin(gunRotationFromPlayer) * gunRadius, math.cos(gunRotationFromPlayer) * gunRadius)

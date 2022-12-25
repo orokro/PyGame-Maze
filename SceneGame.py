@@ -11,7 +11,7 @@
 import pygame
 
 # for rendering map
-from MapRenderer import MapRenderer
+from Map import Map
 
 # import Scene since we finna use that
 from Scene import Scene
@@ -38,13 +38,13 @@ class GameScreen(Scene):
 		self.camera = Camera(self, win)
 
 		# make a new player object
-		self.player = Player(self, win, 18.5, 20, 0)
+		self.player = Player(self, win, 512, 396, 0)
 
 		# move camera to player:
 		self.camera.moveTo(self.player.pos)
 
 		# create new map renderer & load level one map
-		self.map = MapRenderer(self, win)
+		self.map = Map(self, win)
 		self.map.loadMap('./levels/level_02/map.png')
 
 		# we'll hard code title in this file, we dont need to pass it in
