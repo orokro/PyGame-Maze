@@ -52,7 +52,7 @@ class SceneManager:
 		self._scenes.append(scene)
 
 		# if we dont have a scene yet, add the first one we find
-		if(self._currentScene==None):
+		if self._currentScene is None:
 			self.switch_scene(scene)
 
 		# the new length -1 is it's index
@@ -74,12 +74,12 @@ class SceneManager:
 		scene = self._scenes[sceneOrSceneIndex] if isinstance(sceneOrSceneIndex, int) else sceneOrSceneIndex
 			
 		# if our scene is already this scene, just gtfo
-		if(self._currentScene==scene):
+		if self._currentScene is scene:
 			return scene;
 
 		# call "exit" on our current scene, which is now the old scene
 		oldScene = self._currentScene
-		if(oldScene!=None):
+		if oldScene!=None:
 			oldScene.scene_exit()
 
 		# replace current scene with the chosen one

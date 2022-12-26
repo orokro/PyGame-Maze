@@ -96,7 +96,7 @@ class Map:
 		y = int(pos.y) if isinstance(pos, pygame.Vector2) else int(pos[1])
 		
 		# if map image is not define return ground (at least would be able to walk around infinately)
-		if(self._mapImage==None):
+		if self._mapImage is None:
 			return Map.DARK
 
 		# make sure the position is in bounds of our image:
@@ -114,9 +114,9 @@ class Map:
 		redChannel = pixelRGB[0]
 
 		# if it's less than, say 10, we'll assume its black (aka wall)
-		if(redChannel < 10):
+		if redChannel < 10:
 			return Map.WALL
-		elif(redChannel>= 10):
+		elif redChannel>= 10:
 			return Map.GROUND
 			
 
@@ -165,7 +165,7 @@ class Map:
 		"""
 
 		# if we don't have a map loaded yet, gtfo
-		if self._mapImage==None:
+		if self._mapImage is None:
 			return
 
 		"""

@@ -115,15 +115,15 @@ class MazeGame:
 		keys = pygame.key.get_pressed()
 
 		# switch scenes via keypressed
-		if(keys[pygame.K_1]):
+		if keys[pygame.K_1]:
 			self._sceneMgr.switch_scene(0)	
-		if(keys[pygame.K_2]):
+		if keys[pygame.K_2]:
 			self._sceneMgr.switch_scene(1)
-		if(keys[pygame.K_3]):
+		if keys[pygame.K_3]:
 			self._sceneMgr.switch_scene(2)
 
 		# quit
-		if(keys[pygame.K_q]):
+		if keys[pygame.K_q]:
 			self.quit_game()
 
 
@@ -151,7 +151,7 @@ class MazeGame:
 		"""
 
 		# loop until this boolean is false, or we break the while
-		while(self._run):
+		while self._run:
 
 			# we'll lock/target our hardcoded FPS
 			# (FYI pygame clocks will automatically sleep the amount required to target a FPS)
@@ -165,7 +165,7 @@ class MazeGame:
 			scene = self._sceneMgr.current_scene
 
 			# if we have a current scene
-			if(scene!=None):
+			if scene is not None:
 
 				# update scene logic
 				scene.update()

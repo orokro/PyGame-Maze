@@ -151,7 +151,7 @@ class TitleScreen(Scene):
 				self._render_option_text()
 
 			# if enter/return was pressed, do whatever option we have currently selected
-			if(event.key==pygame.K_RETURN or event.key==pygame.K_KP_ENTER):
+			if event.key==pygame.K_RETURN or event.key==pygame.K_KP_ENTER:
 
 				# just call our select option method with whatever one we currently have in our class
 				self._select_option(self._selectedOption)
@@ -166,10 +166,10 @@ class TitleScreen(Scene):
 		"""
 		
 		# handle corresponding option
-		if(option==TitleScreen.Options.START):
+		if option==TitleScreen.Options.START:
 			self._game.start_game()
 		
-		elif(option==TitleScreen.Options.QUIT):
+		elif option==TitleScreen.Options.QUIT:
 			self._game.quit_game()
 		
 
@@ -195,7 +195,7 @@ class TitleScreen(Scene):
 		# use sine curve with time elapsed as theta, to get some fraction to multiply by
 		timeElapsed = pygame.time.get_ticks() * 0.01
 		scaleAmountFloat = 1.0 + (math.sin(timeElapsed) * 0.15)
-		if(self._selectedOption==TitleScreen.Options.START):
+		if self._selectedOption==TitleScreen.Options.START:
 
 			# return just start scaled
 			newSize = (self._txtStartInitialSize[0]*scaleAmountFloat, self._txtStartInitialSize[1] * scaleAmountFloat )

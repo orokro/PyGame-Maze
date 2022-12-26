@@ -77,7 +77,7 @@ class WorldEntity:
 		moveComponent = pygame.Vector2(math.sin(angleInRadians) * magnitude, math.cos(angleInRadians) * magnitude)
 
 		# if we're asked to return the compoent, isntead of applying, do so now
-		if(returnInsteadOfApply==True):
+		if returnInsteadOfApply is True:
 			return moveComponent
 
 		# save old position

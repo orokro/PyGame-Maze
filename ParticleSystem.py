@@ -75,7 +75,7 @@ class ParticleSystem:
 		"""
 
 		# see ya
-		if(particle in self.particles):
+		if particle in self.particles:
 			self.particles.remove(particle)
 
 	

@@ -87,7 +87,7 @@ class Particle(WorldEntity):
 		currentCycleNumber = deltaTime // self._cycleLengthInMS
 
 		# if we have inifite cycles, nothing else to do here, but other wise, see if we are done
-		if(self._cycleCount!=0 and currentCycleNumber>self._cycleCount):
+		if self._cycleCount!=0 and currentCycleNumber>self._cycleCount:
 
 			# rip
 			self.kill();
@@ -111,7 +111,7 @@ class Particle(WorldEntity):
 		"""
 
 		# check if have an customUpdate funciton:
-		if(self._customUpdate != None and callable(self._customUpdate)):
+		if self._customUpdate != None and callable(self._customUpdate):
 			
 			# call our custom function and capture it's return status
 			# note that we pass in reference to ourself and cycle time settings
@@ -119,7 +119,7 @@ class Particle(WorldEntity):
 
 			# like the comment block says above, if we get False as a response, we're done here
 			# so lets GTFO
-			if(updateResult is False):
+			if updateResult is False:
 				return
 
 		# ----------------------------------------------
@@ -132,13 +132,13 @@ class Particle(WorldEntity):
 		self.default_move()
 
 		# if we have kill on OoB enabled, check if we should kill ourself
-		if(self.killWhenOOB is True):
+		if self.killWhenOOB is True:
 
 			# are we OoB (out of bounds)
 			isOoB = self._scene.camera.is_off_screen(self.pos, 100)
 
 			# if out of bounds, see ya
-			if(isOoB is True):
+			if isOoB is True:
 				self.kill()
 		
 

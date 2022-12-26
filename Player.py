@@ -90,7 +90,7 @@ class Player(WorldEntity):
 		"""
 
 		# set to max, it will drain after keys are let go. max out at 10
-		if(self._animationWalkCycleBlend < 10):
+		if self._animationWalkCycleBlend < 10:
 			self._animationWalkCycleBlend = 10
 
 
@@ -129,7 +129,7 @@ class Player(WorldEntity):
 		self._enable_walk_cycle_animation()
 
 		# ternary for straf modifier
-		strafeModifierAngle = 90 if (strafe==True) else 0
+		strafeModifierAngle = 90 if (strafe is True) else 0
 
 		# use geometry to determine movement
 		
@@ -186,13 +186,13 @@ class Player(WorldEntity):
 
 		# check just a bit left of the player	
 		left = newPos + pygame.Vector2(-colisionRadius, 0)
-		if(map.get_tile_at_pixel_pos(left) != Map.GROUND):
+		if map.get_tile_at_pixel_pos(left) != Map.GROUND:
 			self.colPoints.append(left.copy())
 			newPos.x += px
 
 		# check just right of the player
 		right = newPos + pygame.Vector2( colisionRadius, 0)
-		if(map.get_tile_at_pixel_pos(right) != Map.GROUND):
+		if map.get_tile_at_pixel_pos(right) != Map.GROUND:
 			self.colPoints.append(right.copy())
 			newPos.x -= px
 
@@ -200,13 +200,13 @@ class Player(WorldEntity):
 
 		# check just above the player
 		top = newPos + pygame.Vector2(0, -colisionRadius)
-		if(map.get_tile_at_pixel_pos(top) != Map.GROUND):
+		if map.get_tile_at_pixel_pos(top) != Map.GROUND:
 			self.colPoints.append(top.copy())
 			newPos.y += py
 
 		# check just below the player
 		bottom = newPos + pygame.Vector2(0,  colisionRadius)
-		if(map.get_tile_at_pixel_pos(bottom) != Map.GROUND):
+		if map.get_tile_at_pixel_pos(bottom) != Map.GROUND:
 			self.colPoints.append(bottom.copy())
 			newPos.y -= py
 
@@ -251,7 +251,7 @@ class Player(WorldEntity):
 		activeKeys = pygame.key.get_pressed()
 
 		# if shift is not held, we rotate (as opposed to strafe)
-		if(activeKeys[pygame.K_LSHIFT]==False and activeKeys[pygame.K_RSHIFT]==False):
+		if activeKeys[pygame.K_LSHIFT] is False and activeKeys[pygame.K_RSHIFT] is False:
 
 			# left/a is rotate left:
 			if activeKeys[pygame.K_LEFT] or activeKeys[pygame.K_a]:
@@ -285,10 +285,10 @@ class Player(WorldEntity):
 		for event in keysDownEvents:
 			
 			# skip non key events
-			if(event.type==pygame.KEYDOWN):
+			if event.type==pygame.KEYDOWN:
 
 				# if its space, fire
-				if(event.key == pygame.K_SPACE):
+				if event.key == pygame.K_SPACE:
 					self.fire()
 
 
@@ -336,7 +336,7 @@ class Player(WorldEntity):
 		screenPos = self._scene.camera.get_screen_pos(self.pos)
 		
 		# always decrease this over time, till we hit 0
-		if(self._animationWalkCycleBlend > 0):
+		if self._animationWalkCycleBlend > 0:
 			self._animationWalkCycleBlend -= 1
 
 		# normalize walk cycle blend value

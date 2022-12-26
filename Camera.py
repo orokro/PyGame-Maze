@@ -157,16 +157,16 @@ class Camera(WorldEntity):
 		bounds = dotdict(self.get_camera_bounds())
 
 		# basically, just add margin to the bounds and check if the passed pos component is outside
-		if(pos.x < (bounds.topLeft.x - margin)):
+		if pos.x < (bounds.topLeft.x - margin):
 			return True
 
-		if(pos.x > (bounds.bottomRight.x + margin)):
+		if pos.x > (bounds.bottomRight.x + margin):
 			return True
 
-		if(pos.y < (bounds.topLeft.y - margin)):
+		if pos.y < (bounds.topLeft.y - margin):
 			return True
 
-		if(pos.y > (bounds.bottomRight.y + margin)):
+		if pos.y > (bounds.bottomRight.y + margin):
 			return True
 
 		# if we got past all four gaurd clauses, we must be in bounds:
