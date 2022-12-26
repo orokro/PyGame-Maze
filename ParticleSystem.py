@@ -78,6 +78,9 @@ class ParticleSystem:
 		if particle in self.particles:
 			self.particles.remove(particle)
 
+		# for debug
+		print(f"Active Particles: {len(self.particles)}")
+	
 	
 	# updates all particles that are spawned
 	def update(self):

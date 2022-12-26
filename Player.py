@@ -372,6 +372,10 @@ class Player(WorldEntity):
 		self._gunPos = pygame.Vector2(math.sin(gunRotationFromPlayer) * gunRadius, math.cos(gunRotationFromPlayer) * gunRadius)
 		gunPos = screenPos + self._gunPos
 
+		# NOTE: the above "self._gunPos" is absolute filthy.
+		# It should be refactored out into it's own method, but that's kinda complicated rn
+		# since we're gonna draw the player every frame, we'll just store it there for now
+
 		# rotate bit to screen. ORDER MATTERS! bottom-to-top
 		self.blit_rotate_center(self._win, self._images["feet"], screenPos-self._feetOffset, self.rot+feetRotOffset)
 		self.blit_rotate_center(self._win, imgTorsoScaled, screenPos-newTorsoOffset, self.rot+torsoRotOffset)
@@ -379,4 +383,20 @@ class Player(WorldEntity):
 		self.blit_rotate_center(self._win, self._images["gun"], gunPos-self._gunOffset, self.rot)
 
 		self.draw_collisions()
+
+
+	# property to get where the players hand is, for spawning bullets, and etc
+	@property
+	def handPos(self):
+		"""Property to get the Vector2 position where the players gun-hand is
+
+		Returns:
+			Vector2: the place in 2d space where the gun hand is
+		"""
+
+		# handle the first frame where _gunPos might not exist yet
+		gunPos = self._gunPos or pygame.Vector2(0, 0)
+
+		# return place where hand should be
+		return self.pos + gunPos
 		

@@ -10,16 +10,13 @@
 # we're gonna use pygame for our rendering, etc
 import pygame
 
-# for rendering map
-from Map import Map
-
 # import Scene since we finna use that
 from Scene import Scene
 
-# import our camera class
+# our various scene objects and systems
+from ParticleSystem import ParticleSystem
 from Camera import Camera
-
-# crucial: require the player /s
+from Map import Map
 from Player import Player
 
 # Game screen scene, extends Scene
@@ -40,6 +37,9 @@ class GameScreen(Scene):
 		# make a new player object
 		self.player = Player(self, win, 512, 396, 0)
 
+		# create our particle system so we can spawn particles & udpate em & etc
+		self.particles = ParticleSystem(self, win)
+
 		# move camera to player:
 		self.camera.move_to(self.player.pos)
 
@@ -51,11 +51,11 @@ class GameScreen(Scene):
 		super().__init__(game, win, "Game Play Screen")
 
 		# subscribe to various events we might care about
-		self.subscribeEvents()
+		self.subscribe_events()
 
 
 	# set up event handlers for any objects we care to listen to
-	def subscribeEvents(self):
+	def subscribe_events(self):
 		"""Some objects may fire events. Well subcribe to most or all of them here, for tidyness sake
 		"""
 
@@ -71,7 +71,13 @@ class GameScreen(Scene):
 			player (Player): the player that fired
 		"""
 
-		print('biggity biggity bang!')
+		# collect our variables
+		pType = ParticleSystem.TYPES.BULLET
+		pos = self.camera.get_screen_pos(self.player.handPos)
+		angle = self.player.rot
+		speed = 10
+
+		self.particles.spawn_particle(pType, pos, angle, speed)
 
 
 	# method called when we enter this scene
@@ -114,6 +120,9 @@ class GameScreen(Scene):
 		# update our player:
 		self.player.check_player_input(recentEvents)
 
+		# update our particles
+		self.particles.update()
+
 		# move camera to player:
 		self.camera.move_to(self.player.pos)
 
@@ -135,6 +144,9 @@ class GameScreen(Scene):
 		# draw our player
 		self.player.draw()
 
+		# draw our particles
+		self.particles.draw()
+				
 		# update the display
 		pygame.display.update()
 
