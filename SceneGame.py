@@ -8,8 +8,10 @@
 """
 
 # we're gonna use pygame for our rendering, etc
-from re import M
 import pygame
+
+# for randomnes
+import random
 
 # import Scene since we finna use that
 from Scene import Scene
@@ -72,19 +74,44 @@ class GameScreen(Scene):
 			player (Player): the player that fired
 		"""
 
-		# collect our variables
-		pType = ParticleSystem.TYPES.BULLET
-		pos = self.player.handPos
-		angle = self.player.rot
-		speed = 20
+		# function to handle collision with paricle
+		def handleBulletCollision(particle, collisionResults):
+
+			# kill the existing particle
+			particle.kill()
+			
+			# make new particle that auto deletes
+			newParticle = self.particles.spawn_particle(
+				ParticleSystem.TYPES.POOF,
+				particle.pos,
+				random.random()*360,
+				0)
+
+			# will auto kill after 1 second
+			newParticle.set_cycle_settings(1, 15)
+			newParticle.set_blend_mode(pygame.BLEND_ADD)
 
 		# spawns bullets that collide with walls & kill selves after collision
-		self.particles.spawn_particle(pType, pos, angle, speed,
+		self.particles.spawn_particle(
+			ParticleSystem.TYPES.BULLET,
+			self.player.handPos,
+			self.player.rot, 
+			20,
 			None, 
 			None,
 			lambda p : None if self.map.get_tile_at_pixel_pos(p.pos) == Map.GROUND else True,
-			lambda p, c : p.kill()
+			handleBulletCollision
 			)
+
+		# also spawn a flash around our gun
+		flash = self.particles.spawn_particle(
+			ParticleSystem.TYPES.FLASH,
+			self.player.handPos,
+			0,
+			0)
+		flash.set_cycle_settings(1,  15)
+		flash.set_blend_mode(pygame.BLEND_ADD)
+		
 
 
 	# method called when we enter this scene

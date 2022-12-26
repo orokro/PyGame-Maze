@@ -32,6 +32,7 @@ class ParticleSystem:
 	TYPES = dotdict({
 		"BULLET": 0,
 		"FLASH": 1,
+		"POOF": 2,
 	})
 
 	# constructor
@@ -66,6 +67,7 @@ class ParticleSystem:
 		self._images = [
 			pygame.image.load('./img/particles/space_bullet.png'),
 			pygame.image.load('./img/particles/flash.png'),
+			pygame.image.load('./img/particles/poof.png'),
 		]
 
 
@@ -119,6 +121,9 @@ class ParticleSystem:
 			pos (Vector2): postion to spawn in
 			angle (Number): angle to move in degrees
 			speed (Number): how quick should move per update
+
+		Returns:
+			Paricle: the newly instiated particle
 		"""
 
 		# get image via type
@@ -144,3 +149,6 @@ class ParticleSystem:
 
 		# particle exists, just add it to our list
 		self.particles.append(newParticle)
+
+		# return reference to the new particle, for extra customization
+		return newParticle

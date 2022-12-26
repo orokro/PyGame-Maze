@@ -39,4 +39,26 @@ def blit_rotate_center(surface, image, topleft, angle):
 
 	# copy rotated image to surface
 	surface.blit(rotated_image, new_rect)
+
+
+# copied from SO, easy rotate on center script	
+def blit_rotate_center_blend(surface, image, topleft, angle, blendMode):
+	"""Rotates pygame image surface on center
+
+	Args:
+		surafe (Surface): target pygame surface
+		image (Surface): source pygame surface image
+		topleft (Tuple): top left pos tuple
+		angle (Number): rotation angle
+		blendMode (Number): pygame blend mode constant
+	"""
+
+	# rotate the images
+	rotated_image = pygame.transform.rotate(image, angle)
+	new_rect = rotated_image.get_rect(center = image.get_rect(topleft = topleft).center)
+
+	# new_new_rect = (new_rect[0] - (rotated_image.get_width()//2), new_rect[1] - (rotated_image.get_height()//2))
+
+	# copy rotated image to surface
+	surface.blit(rotated_image, new_rect, None, blendMode)
 	

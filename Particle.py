@@ -7,7 +7,7 @@
 
 # yup
 import pygame
-from Util import blit_rotate_center
+from Util import blit_rotate_center, blit_rotate_center_blend
 
 # we're gonna extend this
 from WorldEntity import WorldEntity
@@ -56,6 +56,9 @@ class Particle(WorldEntity):
 		# keep reference of which image we should use for drawing ourself
 		self._img = image
 
+		# default blend mode, which can be set externally
+		self._blendMode = 0 #ygame.BLEND_ADD
+
 		# save speed
 		self.speed = initialSpeed
 
@@ -74,6 +77,32 @@ class Particle(WorldEntity):
 
 		# during our construction, let's save the time elapses do we can use delta time later
 		self._timeAtCreation = pygame.time.get_ticks()
+
+
+	# public way to set / update cycle settings after creation
+	def set_cycle_settings(self, cycleCount=0, cycleLengthInMS = 1000):
+		"""Set / update our cycle settings externally
+
+		Args:
+			cycleCount (int, optional): how many times particle should "loop". Defaults to 0.
+			cycleLengthInMS (int, optional): cycle length in MS. Or... "time units". Defaults to 1000.
+		"""
+
+		# udpate our settings
+		self._cycleCount = cycleCount
+		self._cycleLengthInMS = cycleLengthInMS
+
+
+	# set our render blend mode
+	def set_blend_mode(self, blendMode):
+		"""Sets the blend mode for pygame to draw our sprint
+
+		Args:
+			blendMode (Nummber): one of pygames blend mode constants
+		"""
+
+		# update our render blend modes
+		self._blendMode = blendMode
 
 
 	# function to update particle, move it, rotate it, whatever	
@@ -148,7 +177,7 @@ class Particle(WorldEntity):
 
 					# call it with collision results
 					self._onCollide(self, col)
-					
+
 		# if we have kill on OoB enabled, check if we should kill ourself
 		if self.killWhenOOB is True:
 
@@ -173,7 +202,10 @@ class Particle(WorldEntity):
 	# draw ourself
 	def draw(self):
 
-		# draw the particle
-		screenPos = self._system.cam.get_screen_pos(self.pos)
-		blit_rotate_center(self._win, self._img, screenPos, self.rot)
+		# calclate particle postion
+		imageCenter = pygame.Vector2(self._img.get_width()/2, self._img.get_height()/2)
+		screenPos = self._system.cam.get_screen_pos(self.pos) - imageCenter
+
+		# draw the particle		
+		blit_rotate_center_blend(self._win, self._img, screenPos, self.rot, self._blendMode)
 
