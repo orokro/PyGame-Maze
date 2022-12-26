@@ -8,6 +8,7 @@
 """
 
 # we're gonna use pygame for our rendering, etc
+from re import M
 import pygame
 
 # import Scene since we finna use that
@@ -75,9 +76,15 @@ class GameScreen(Scene):
 		pType = ParticleSystem.TYPES.BULLET
 		pos = self.player.handPos
 		angle = self.player.rot
-		speed = 10
+		speed = 20
 
-		self.particles.spawn_particle(pType, pos, angle, speed)
+		# spawns bullets that collide with walls & kill selves after collision
+		self.particles.spawn_particle(pType, pos, angle, speed,
+			None, 
+			None,
+			lambda p : None if self.map.get_tile_at_pixel_pos(p.pos) == Map.GROUND else True,
+			lambda p, c : p.kill()
+			)
 
 
 	# method called when we enter this scene
@@ -118,7 +125,7 @@ class GameScreen(Scene):
 		recentEvents = pygame.event.get(pygame.KEYDOWN)
 
 		# update our player:
-		self.player.check_player_input(recentEvents)
+		self.player.check_player_input()
 
 		# update our particles
 		self.particles.update()

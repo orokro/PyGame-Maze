@@ -106,7 +106,12 @@ class ParticleSystem:
 
 	
 	# spawns particles
-	def spawn_particle(self, type, pos, angle, speed):
+	def spawn_particle(self, type, pos, angle, speed,
+			onComplete = None,
+			customUpdate = None,
+			customCollision = None,
+			onCollide = None):
+
 		"""Spawns a new particle
 
 		Args:
@@ -129,7 +134,13 @@ class ParticleSystem:
 			int(pos.y),
 			angle,
 			speed,
-			0)
+			0,
+			1000,
+			True,
+			onComplete,
+			customUpdate,
+			customCollision,
+			onCollide)
 
 		# particle exists, just add it to our list
 		self.particles.append(newParticle)

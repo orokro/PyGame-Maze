@@ -34,6 +34,7 @@ class Particle(WorldEntity):
 			killWhenOOB = True, 
 			onComplete = None,
 			customUpdate = None,
+			customCollision = None,
 			onCollide = None):
 		
 		# give ourself a unique ID for this particle
@@ -69,6 +70,7 @@ class Particle(WorldEntity):
 		self._onComplete = onComplete
 		self._customUpdate = customUpdate
 		self._onCollide = onCollide
+		self._customCollision = customCollision
 
 		# during our construction, let's save the time elapses do we can use delta time later
 		self._timeAtCreation = pygame.time.get_ticks()
@@ -111,7 +113,7 @@ class Particle(WorldEntity):
 		"""
 
 		# check if have an customUpdate funciton:
-		if self._customUpdate != None and callable(self._customUpdate):
+		if self._customUpdate is not None and callable(self._customUpdate):
 			
 			# call our custom function and capture it's return status
 			# note that we pass in reference to ourself and cycle time settings
@@ -131,6 +133,22 @@ class Particle(WorldEntity):
 		# basically move the partle in the direction its facing, is all we're gonnda do for now
 		self.default_move()
 
+		# if we have custom collision, call it our - other wise, only collision is OOB
+		if self._customCollision is not None and callable(self._customCollision):
+
+			# call custom collision routine
+			col = self._customCollision(self)
+
+			# if col is not none, then it's a dictionary with collision results.
+			# so just forward it our event
+			if col is not None:
+
+				# if we have the evnet
+				if self._onCollide is not None and callable(self._onCollide):
+
+					# call it with collision results
+					self._onCollide(self, col)
+					
 		# if we have kill on OoB enabled, check if we should kill ourself
 		if self.killWhenOOB is True:
 
@@ -140,6 +158,7 @@ class Particle(WorldEntity):
 			# if out of bounds, see ya
 			if isOoB is True:
 				self.kill()
+
 		
 
 	# this kills the particle

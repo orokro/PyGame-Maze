@@ -53,6 +53,8 @@ class Player(WorldEntity):
 		self._health = 100
 		self._ammo = 100
 		self._infAmmo = True
+		self._autoFireTimer = 0
+		self._autoFireRate = 5
 
 		# some hard coded values
 		self.ROT_SPEED_IN_DEGREES = 5
@@ -242,15 +244,9 @@ class Player(WorldEntity):
 
 
 	# public method called from our Scene to have the player handle input
-	def check_player_input(self, keysDownEvents = None):
+	def check_player_input(self):
 		"""Checks input relevant to player
-
-		Args:
-			keysDownEvents (list, optional): List of key down events passed in from scene. Defaults to [].
 		"""
-
-		# handle optional paramter with or ternary b/c using mutable default has sPoWoKy side effects in Pyland
-		keysDownEvents = keysDownEvents or []
 
 		# while it's true we're passed in keydown events, we only care about that for firing
 		# we'll use the active keys for rotation and movement
@@ -287,15 +283,20 @@ class Player(WorldEntity):
 		if activeKeys[pygame.K_DOWN] or activeKeys[pygame.K_s]:
 			self.move(-1)
 
-		# now that we're done with the active key logic we can check if fire was pressed
-		for event in keysDownEvents:
-			
-			# skip non key events
-			if event.type==pygame.KEYDOWN:
+		# space is fire / auto fire
+		if activeKeys[pygame.K_SPACE]:
 
-				# if its space, fire
-				if event.key == pygame.K_SPACE:
-					self.fire()
+			# fire if molulo is 0:
+			if (self._autoFireTimer % self._autoFireRate) == 0:
+				self.fire()
+
+			# increase auto fire timer
+			self._autoFireTimer +=1 
+
+		# otherwise, if space is not pressed, lock timer to 0
+		else:
+			self._autoFireTimer = 0
+
 
 
 	# copied from SO, easy rotate on center script	
