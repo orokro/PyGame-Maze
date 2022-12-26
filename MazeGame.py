@@ -37,26 +37,26 @@ class MazeGame:
 		self._targetFPS = 60
 
 		# set up pygame lib to create a window and etc
-		self._win = self._setupPyGame()
+		self._win = self._setup_pygame()
 
 		# create a scene manager for us to juggle the main sceens (title, game, ending)
 		self._sceneMgr = SceneManager(self)
 
 		# build our scenes
-		self._setupScenes()
+		self._setup_scenes()
 
 		# for debug: skip to game screen (past title screen)
-		# self._sceneMgr.switchScene(1)
+		self._sceneMgr.switch_scene(1)
 
 		# true until user quits or w/e
 		self._run = True
 
 		# start main loop
-		self._mainLoop()
+		self._main_loop()
 
 
 	# set up pygame
-	def _setupPyGame(self):
+	def _setup_pygame(self):
 		"""Simple method to encapsulate the pygame init schizz
 
 		Returns:
@@ -75,24 +75,24 @@ class MazeGame:
 
 
 	# instantiate our scenes
-	def _setupScenes(self):
+	def _setup_scenes(self):
 		"""Constructes the scenes for our game and adds them to our scene manager
 		"""
 
 		# construct our 3 main scenes, even though we'll only use one-at-a-time
-		self._sceneMgr.addScene(
+		self._sceneMgr.add_scene(
 			TitleScreen(self, self._win)
 		)
-		self._sceneMgr.addScene(
+		self._sceneMgr.add_scene(
 			GameScreen(self, self._win)
 		)
-		self._sceneMgr.addScene(
+		self._sceneMgr.add_scene(
 			EndScreen(self, self._win)
 		)
 
 
 	# check if pygame's windows events includes a quit message, if so, set run false so we can gracefully quit
-	def _checkWindowEventsForQuitMessage(self):
+	def _check_window_events_for_quit_message(self):
 		"""Loops over pygame events checking for a quit/exit message
 		"""
 
@@ -103,11 +103,11 @@ class MazeGame:
 			if event.type == pygame.QUIT:
 
 				# game should quit
-				self.quitGame()
+				self.quit_game()
 
 		
 	# debug key input
-	def _debugInput(self):
+	def _debug_input(self):
 		"""Checks some keys and does debug functions if detected
 		"""
 
@@ -116,19 +116,19 @@ class MazeGame:
 
 		# switch scenes via keypressed
 		if(keys[pygame.K_1]):
-			self._sceneMgr.switchScene(0)	
+			self._sceneMgr.switch_scene(0)	
 		if(keys[pygame.K_2]):
-			self._sceneMgr.switchScene(1)
+			self._sceneMgr.switch_scene(1)
 		if(keys[pygame.K_3]):
-			self._sceneMgr.switchScene(2)
+			self._sceneMgr.switch_scene(2)
 
 		# quit
 		if(keys[pygame.K_q]):
-			self.quitGame()
+			self.quit_game()
 
 
 	# public method to let the game be quit
-	def quitGame(self):
+	def quit_game(self):
 		"""Sets game to quit on next iteration of main loop
 		"""
 
@@ -137,16 +137,16 @@ class MazeGame:
 
 
 	# goes from title scene to main game scene
-	def startGame(self):
+	def start_game(self):
 		"""Setes scene to game scecne
 		"""
 
 		# simply tell our scene manager to goto scene index 1
-		self._sceneMgr.switchScene(1)
+		self._sceneMgr.switch_scene(1)
 
 
 	# our logical main-loop
-	def _mainLoop(self):
+	def _main_loop(self):
 		"""Main game loop
 		"""
 
@@ -159,10 +159,10 @@ class MazeGame:
 
 			# at a top level, handle some debug input
 			# (other scenes will handle input just for that scene)
-			self._debugInput()
+			self._debug_input()
 
 			# get our current screen, then call update and render on it
-			scene = self._sceneMgr.currentScene
+			scene = self._sceneMgr.current_scene
 
 			# if we have a current scene
 			if(scene!=None):
@@ -174,7 +174,7 @@ class MazeGame:
 				scene.render()
 
 			# check to see if we should keep running:
-			self._checkWindowEventsForQuitMessage()
+			self._check_window_events_for_quit_message()
 
 		# shut down cleanly after main loop quits
 		pygame.quit()

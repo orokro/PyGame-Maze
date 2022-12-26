@@ -41,35 +41,35 @@ class GameScreen(Scene):
 		self.player = Player(self, win, 512, 396, 0)
 
 		# move camera to player:
-		self.camera.moveTo(self.player.pos)
+		self.camera.move_to(self.player.pos)
 
 		# create new map renderer & load level one map
 		self.map = Map(self, win)
-		self.map.loadMap('./levels/level_02/map.png')
+		self.map.load_map('./levels/level_02/map.png')
 
 		# we'll hard code title in this file, we dont need to pass it in
 		super().__init__(game, win, "Game Play Screen")
 
 
 	# method called when we enter this scene
-	def sceneEnter(self):
+	def scene_enter(self):
 		"""Called when we enter this scene
 		"""
 
 		# do super stuffs, if any
-		super().sceneEnter()
+		super().scene_enter()
 
 		# for debug and whatnot
 		print(f"Doing game play screen business...")
 
 
 	# method called when we exit this scene
-	def sceneExit(self):
+	def scene_exit(self):
 		"""Called when we exit this scene
 		"""
 
 		# do super stuffs, if any
-		super().sceneExit()
+		super().scene_exit()
 
 		# for debug and whatnot
 		print(f"Game play scene says buh-bye")
@@ -89,10 +89,10 @@ class GameScreen(Scene):
 		recentEvents = pygame.event.get(pygame.KEYDOWN)
 
 		# update our player:
-		self.player.checkPlayerInput(recentEvents)
+		self.player.check_player_input(recentEvents)
 
 		# move camera to player:
-		self.camera.moveTo(self.player.pos)
+		self.camera.move_to(self.player.pos)
 
 
 	# method for rendering scene
@@ -107,7 +107,7 @@ class GameScreen(Scene):
 		self._win.fill((0, 0, 0))
 
 		# draw map before player & other stuff on top
-		self.map.drawMap()
+		self.map.draw_map()
 
 		# draw our player
 		self.player.draw()

@@ -49,21 +49,21 @@ class WorldEntity:
 
 	
 	# moves ourself by our self-defined variables
-	def defaultMove(self):
+	def default_move(self):
 		"""Basically, a light weight wrapper for moveByAngleAndMagnitute to use our self props
 		"""
 
 		# call our gernci move by angle/magnitude method with our self params
-		self.moveByAngleAndMagnitute(self.rot, self.speed)
+		self.move_by_angle_and_magnitude(self.rot, self.speed)
 
 
 	# helper function for angle sin/cos movement
-	def moveByAngleAndMagnitute(self, angle, magnitute, returnInsteadOfApply = False):
+	def move_by_angle_and_magnitude(self, angle, magnitude, returnInsteadOfApply = False):
 		"""Moves our pos by an Angle (in degrees) and by some magnitute
 
 		Args:
 			angle (Number): angle to move towards
-			magnitute (Number): radius in world pixels
+			magnitude (Number): radius in world pixels
 			returnInsteadOfApply (bool, optional): Set true to return movement x/y instead of applying immediately. Defaults to False.
 
 		Returns:
@@ -74,7 +74,7 @@ class WorldEntity:
 		angleInRadians = angle * (math.pi/180.0)
 
 		# compute new position component as Vector2
-		moveComponent = pygame.Vector2(math.sin(angleInRadians) * magnitute, math.cos(angleInRadians) * magnitute)
+		moveComponent = pygame.Vector2(math.sin(angleInRadians) * magnitude, math.cos(angleInRadians) * magnitude)
 
 		# if we're asked to return the compoent, isntead of applying, do so now
 		if(returnInsteadOfApply==True):

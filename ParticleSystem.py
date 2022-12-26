@@ -22,6 +22,9 @@ import pygame
 # sane dictionary access
 from Util import dotdict
 
+# uhh yea, ParticleSystem definately gonna want some Particle
+from Particle import Particle
+
 # the particle system class
 class ParticleSystem:
 
@@ -41,18 +44,18 @@ class ParticleSystem:
 		"""
 
 		# save references to our scene and render window
-		self.scene = scene
+		self._scene = scene
 		self._win = win
 
 		# this list will contain our active particles as they're spawned and etc
 		self.particles = []
 
 		# intialize pygame stuff we'll use for particles
-		self._setupPygame()
+		self._setup_pygame()
 
 
 	# initialize pygame stuff we'll need for our particle system
-	def _setupPygame(self):
+	def _setup_pygame(self):
 		"""Sets up pygame related objects we'll need for the particle system, so we can tidy up the constructor
 		"""
 
@@ -64,7 +67,12 @@ class ParticleSystem:
 
 
 	# removes particle from our array, in theory, garabage collecting it eventually
-	def killParticle(self, particle):
+	def kill_particle(self, particle):
+		"""Removes a particle from our list of particles
+
+		Args:
+			particle (Particle): the particle to remove
+		"""
 
 		# see ya
 		if(particle in self.particles):
@@ -73,6 +81,8 @@ class ParticleSystem:
 	
 	# updates all particles that are spawned
 	def update(self):
+		"""Basically just calls update on all the parctles spawned and in our particles[] list
+		"""
 
 		# update 'em all
 		for particle in self.particles:
@@ -81,9 +91,39 @@ class ParticleSystem:
 
 	# draws all our particles
 	def draw(self):
+		"""Basically just calls draw() on all the particles spawned in our particles[] list
+		"""
 
 		# draw 'em all
 		for particle in self.particles:
 			particle.draw()
 
 	
+	# spawns particles
+	def spawn_particle(self, type, pos, angle, speed):
+		"""Spawns a new particle
+
+		Args:
+			type (Number): the ty pe tto spawn
+			pos (Vector2): postion to spawn in
+			angle (Number): angle to move in degrees
+			speed (Number): how quick should move per update
+		"""
+
+		# get image via type
+		particleImage = self._images[type]
+
+		# spawn the particle
+		newParticle = Particle(
+			self._scene,
+			self._win,
+			self,
+			particleImage,
+			int(pos.x),
+			int(pos.y),
+			angle,
+			speed,
+			0)
+
+		# particle exists, just add it to our list
+		self.particles.append(newParticle)

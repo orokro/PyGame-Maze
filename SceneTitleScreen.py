@@ -51,11 +51,11 @@ class TitleScreen(Scene):
 
 		# we will use this a 
 		# set up pygame stuff we'll need for this scene
-		self._setupPygame()
+		self._setup_pygame()
 
 
 	# moves pygame related stuff out of constructor
-	def _setupPygame(self):
+	def _setup_pygame(self):
 		"""Initilizes the pygame objects we'll need for this scene
 		"""
 
@@ -77,7 +77,7 @@ class TitleScreen(Scene):
 		self._font = pygame.font.Font("./fonts/framd.ttf", self._menuTextFontSize)
 
 		# make sure we render our text surfaces at least once on init, etc
-		self._renderOptionText()
+		self._render_option_text()
 
 		# we'll save the initial canvas sizes of both of 'em so we can animate them in render later
 		self._txtStartInitialSize = (self._txtStart.get_width(), self._txtStart.get_height())
@@ -85,7 +85,7 @@ class TitleScreen(Scene):
 		
 		
 	# renders the option text with updated colors whenever the options change, or on init
-	def _renderOptionText(self):
+	def _render_option_text(self):
 		"""Renders text surfaces for our "START" and "QUIT" options
 		"""
 
@@ -99,12 +99,12 @@ class TitleScreen(Scene):
 
 
 	# method called when we enter this scene
-	def sceneEnter(self):
+	def scene_enter(self):
 		"""Called when we enter this scene
 		"""
 
 		# do super stuffs, if any
-		super().sceneEnter()
+		super().scene_enter()
 
 		# for debug and whatnot
 		print(f"Doing title screen business...")
@@ -114,19 +114,19 @@ class TitleScreen(Scene):
 
 
 	# method called when we exit this scene
-	def sceneExit(self):
+	def scene_exit(self):
 		"""Called when we exit this scene
 		"""
 
 		# do super stuffs, if any
-		super().sceneExit()
+		super().scene_exit()
 
 		# for debug and whatnot
 		print(f"Title Screen says buh-bye")
 
 
 	# handles keyboard input for the title screen
-	def _checkKeys(self):
+	def _check_keys(self):
 		"""Checks keyboard keydown events so we can select options, etc
 		"""
 
@@ -148,17 +148,17 @@ class TitleScreen(Scene):
 				self._selectedOption = TitleScreen.Options.QUIT if (self._selectedOption==TitleScreen.Options.START) else TitleScreen.Options.START
 
 				# re-render text, so colors are fresh
-				self._renderOptionText()
+				self._render_option_text()
 
 			# if enter/return was pressed, do whatever option we have currently selected
 			if(event.key==pygame.K_RETURN or event.key==pygame.K_KP_ENTER):
 
 				# just call our select option method with whatever one we currently have in our class
-				self._selectOption(self._selectedOption)
+				self._select_option(self._selectedOption)
 
 
 	# selets one of t he options on the title screen
-	def _selectOption(self, option):
+	def _select_option(self, option):
 		"""Selets one of the title screen options & does the correct corresponding action
 
 		Args:
@@ -167,10 +167,10 @@ class TitleScreen(Scene):
 		
 		# handle corresponding option
 		if(option==TitleScreen.Options.START):
-			self._game.startGame()
+			self._game.start_game()
 		
 		elif(option==TitleScreen.Options.QUIT):
-			self._game.quitGame()
+			self._game.quit_game()
 		
 
 	# method for doing update logic on this scene
@@ -182,11 +182,11 @@ class TitleScreen(Scene):
 		super().update()
 
 		# check keys for up, down, and enter
-		self._checkKeys()
+		self._check_keys()
 
 
 	# fugly function to scale the currenty selected text on a sine curve. mmmm B O U N C Y mmm
-	def _scaleTextOnOnSineCurve(self):
+	def _scale_text_on_sine_curve(self):
 		"""Scales both our txtStart and txtQuit based on which is selected, on a nice sine curve
 
 		Returns:
@@ -229,7 +229,7 @@ class TitleScreen(Scene):
 		win.blit(self._images["bg"], (0, 0))
 
 		# get approrpriately scaled texts
-		scaledTexts = self._scaleTextOnOnSineCurve()
+		scaledTexts = self._scale_text_on_sine_curve()
 
 		# copy text to screen, centered on a point
 		txtStart = scaledTexts["txtStart"]

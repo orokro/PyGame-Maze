@@ -56,14 +56,14 @@ class Player(WorldEntity):
 		self._animationWalkCycleBlend = 0
 
 		# set up the pygame resources we'll need for our player
-		self._setupPygame()
+		self._setup_pygame()
 
 		# keep track of coillision points for debug
 		self.colPoints = []
 
 
 	# initialize pygame stuff we'll need for our player characater
-	def _setupPygame(self):
+	def _setup_pygame(self):
 		"""Sets up pygame related objects we'll need for the character, so we can tidy up the constructor
 		"""
 
@@ -85,7 +85,9 @@ class Player(WorldEntity):
 
 
 	# our animation timer for walk cycle is set on (max)
-	def _enableWalkCycleAnimation(self):
+	def _enable_walk_cycle_animation(self):
+		"""Sets our walk cycle variable to max, whenever there's keyboard input
+		"""
 
 		# set to max, it will drain after keys are let go. max out at 10
 		if(self._animationWalkCycleBlend < 10):
@@ -101,7 +103,7 @@ class Player(WorldEntity):
 		"""
 
 		# sets our walk cycle animation to max
-		self._enableWalkCycleAnimation()
+		self._enable_walk_cycle_animation()
 
 		# adjust our rotation angle
 		self.rot += (direction * self.ROT_SPEED_IN_DEGREES)
@@ -124,7 +126,7 @@ class Player(WorldEntity):
 		"""
 
 		# sets our walk cycle animation to max
-		self._enableWalkCycleAnimation()
+		self._enable_walk_cycle_animation()
 
 		# ternary for straf modifier
 		strafeModifierAngle = 90 if (strafe==True) else 0
@@ -144,13 +146,13 @@ class Player(WorldEntity):
 		newPos = self.pos - newPosComponent
 
 		# collision check pos
-		self.pos = self._checkWallCollision(self.pos, newPos)
+		self.pos = self._check_wall_collision(self.pos, newPos)
 
 		# print(self.pos)
 
 	
 	# checks cardinal directions around player to see if he touched a wall and revert old coodinate if so
-	def _checkWallCollision(self, oldPos, newPos):
+	def _check_wall_collision(self, oldPos, newPos):
 		"""Checks if player collided with a wall tile. This collision will be separate from enemey / particles, etc
 
 		Args:
@@ -184,13 +186,13 @@ class Player(WorldEntity):
 
 		# check just a bit left of the player	
 		left = newPos + pygame.Vector2(-colisionRadius, 0)
-		if(map.getTileAtPixelPos(left) != Map.GROUND):
+		if(map.get_tile_at_pixel_pos(left) != Map.GROUND):
 			self.colPoints.append(left.copy())
 			newPos.x += px
 
 		# check just right of the player
 		right = newPos + pygame.Vector2( colisionRadius, 0)
-		if(map.getTileAtPixelPos(right) != Map.GROUND):
+		if(map.get_tile_at_pixel_pos(right) != Map.GROUND):
 			self.colPoints.append(right.copy())
 			newPos.x -= px
 
@@ -198,13 +200,13 @@ class Player(WorldEntity):
 
 		# check just above the player
 		top = newPos + pygame.Vector2(0, -colisionRadius)
-		if(map.getTileAtPixelPos(top) != Map.GROUND):
+		if(map.get_tile_at_pixel_pos(top) != Map.GROUND):
 			self.colPoints.append(top.copy())
 			newPos.y += py
 
 		# check just below the player
 		bottom = newPos + pygame.Vector2(0,  colisionRadius)
-		if(map.getTileAtPixelPos(bottom) != Map.GROUND):
+		if(map.get_tile_at_pixel_pos(bottom) != Map.GROUND):
 			self.colPoints.append(bottom.copy())
 			newPos.y -= py
 
@@ -234,12 +236,15 @@ class Player(WorldEntity):
 
 
 	# public method called from our Scene to have the player handle input
-	def checkPlayerInput(self, keysDownEvents = []):
+	def check_player_input(self, keysDownEvents = None):
 		"""Checks input relevant to player
 
 		Args:
 			keysDownEvents (list, optional): List of key down events passed in from scene. Defaults to [].
 		"""
+
+		# handle optional paramter with or ternary b/c using mutable default has sPoWoKy side effects in Pyland
+		keysDownEvents = keysDownEvents or []
 
 		# while it's true we're passed in keydown events, we only care about that for firing
 		# we'll use the active keys for rotation and movement
@@ -288,11 +293,11 @@ class Player(WorldEntity):
 
 
 	# copied from SO, easy rotate on center script	
-	def blitRotateCenter(self, surface, image, topleft, angle):
+	def blit_rotate_center(self, surface, image, topleft, angle):
 		"""Rotates pygame image surface on center
 
 		Args:
-			surafe (Surface): target pygame surface
+			surface (Surface): target pygame surface
 			image (Surface): source pygame surface image
 			topleft (Tuple): top left pos tuple
 			angle (Number): rotation angle
@@ -309,13 +314,13 @@ class Player(WorldEntity):
 
 
 	# debug function to show collisions as red dots
-	def drawCollisions(self):
+	def draw_collisions(self):
 		"""Draws collisions with walls as red dots
 		"""
 
 		# loop over our list of colision point vectors & draw 'em on screen as red circles
 		for colPoint in self.colPoints:
-			sp = self._scene.camera.getScreenPos(colPoint)
+			sp = self._scene.camera.get_screen_pos(colPoint)
 			pygame.draw.circle(self._win, (255,0,0), (int(sp[0]), int(sp[1])), 5)
 
 		# reset array of colisions till next frame
@@ -328,7 +333,7 @@ class Player(WorldEntity):
 		"""
 
 		# find where on screen we should be relative to the camera
-		screenPos = self._scene.camera.getScreenPos(self.pos)
+		screenPos = self._scene.camera.get_screen_pos(self.pos)
 		
 		# always decrease this over time, till we hit 0
 		if(self._animationWalkCycleBlend > 0):
@@ -361,10 +366,10 @@ class Player(WorldEntity):
 		gunPos = screenPos + pygame.Vector2(math.sin(gunRotationFromPlayer) * gunRadius, math.cos(gunRotationFromPlayer) * gunRadius)
 
 		# rotate bit to screen. ORDER MATTERS! bottom-to-top
-		self.blitRotateCenter(self._win, self._images["feet"], screenPos-self._feetOffset, self.rot+feetRotOffset)
-		self.blitRotateCenter(self._win, imgTorsoScaled, screenPos-newTorsoOffset, self.rot+torsoRotOffset)
-		self.blitRotateCenter(self._win, self._images["head"], screenPos-self._headOffset, self.rot+headRotOffset)
-		self.blitRotateCenter(self._win, self._images["gun"], gunPos-self._gunOffset, self.rot)
+		self.blit_rotate_center(self._win, self._images["feet"], screenPos-self._feetOffset, self.rot+feetRotOffset)
+		self.blit_rotate_center(self._win, imgTorsoScaled, screenPos-newTorsoOffset, self.rot+torsoRotOffset)
+		self.blit_rotate_center(self._win, self._images["head"], screenPos-self._headOffset, self.rot+headRotOffset)
+		self.blit_rotate_center(self._win, self._images["gun"], gunPos-self._gunOffset, self.rot)
 
-		self.drawCollisions()
+		self.draw_collisions()
 		

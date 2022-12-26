@@ -38,7 +38,7 @@ class SceneManager:
 	
 
 	# adds a scene for us to manage, returns the index
-	def addScene(self, scene):
+	def add_scene(self, scene):
 		"""Adds a scene to this SceneManager to manage
 
 		Args:
@@ -53,14 +53,14 @@ class SceneManager:
 
 		# if we dont have a scene yet, add the first one we find
 		if(self._currentScene==None):
-			self.switchScene(scene)
+			self.switch_scene(scene)
 
 		# the new length -1 is it's index
 		return (len(self._scenes) - 1)
 	
 
 	# lets user switch scene
-	def switchScene(self, sceneOrSceneIndex):
+	def switch_scene(self, sceneOrSceneIndex):
 		"""Switches the scene
 
 		Args:
@@ -80,13 +80,13 @@ class SceneManager:
 		# call "exit" on our current scene, which is now the old scene
 		oldScene = self._currentScene
 		if(oldScene!=None):
-			oldScene.sceneExit()
+			oldScene.scene_exit()
 
 		# replace current scene with the chosen one
 		self._currentScene = scene
 
 		# call enter method on current scene
-		self._currentScene.sceneEnter()
+		self._currentScene.scene_enter()
 
 		# Just for fun, return the old scene incase caller wants it
 		return oldScene
@@ -94,7 +94,7 @@ class SceneManager:
 
 	# getter function to explose w/e the current scene is
 	@property
-	def currentScene(self):
+	def current_scene(self):
 		"""Simple helper getter to expose our current scene
 
 		Returns:

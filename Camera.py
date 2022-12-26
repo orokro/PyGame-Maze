@@ -18,6 +18,9 @@
 # pygame for Vector 2 & etc
 import pygame
 
+# useful
+from Util import dotdict
+
 # we gonna extend this
 from WorldEntity import WorldEntity
 
@@ -54,7 +57,7 @@ class Camera(WorldEntity):
 	
 
 	# public method to update camera position to some pixels
-	def moveTo(self, newPos):
+	def move_to(self, newPos):
 		"""public method to update camera position in game pixel coordinates
 
 		Args:
@@ -66,7 +69,7 @@ class Camera(WorldEntity):
 
 
 	# helper function to get screen coordinates of a vector2 from our camera position
-	def getScreenPos(self, pos):
+	def get_screen_pos(self, pos):
 		"""Gets where on screen an object should be in pixels, from it's position relative to the camera in world coordinates
 
 		Args:
@@ -78,7 +81,7 @@ class Camera(WorldEntity):
 
 		# we want to think of our x/y position as the center of the screen, so we should subtract
 		# center to get what would be the top-left pixel of the window:
-		windowTopLeft = self.topLeftInPixels
+		windowTopLeft = self.top_left_in_pixels
 
 		# now we should get the vector from top left TO object pos
 		# tip-minus-tail:
@@ -91,7 +94,7 @@ class Camera(WorldEntity):
 	# gets the top left of the camera in screen/world pixels
 	# (well, screen is always 0,0, but where is that top left in the world?)
 	@property
-	def topLeftInPixels(self):
+	def top_left_in_pixels(self):
 		"""Gets the cameras top-left corner in world pixels
 
 		Returns:
@@ -105,7 +108,7 @@ class Camera(WorldEntity):
 	# gets the bottom of the camera in screen/world pixels
 	# (well, screen is always w,h, but where is that bottom right in the world?)
 	@property
-	def bottomRightInPixels(self):
+	def bottom_right_in_pixels(self):
 		"""Gets the camerasbottom-right corner in world pixels
 
 		Returns:
@@ -117,7 +120,7 @@ class Camera(WorldEntity):
 	
 
 	# helper function to get the bounds of the camera
-	def getCameraBounds(self):
+	def get_camera_bounds(self):
 		"""Gets the top/bottom/left/right postion of the camera in world units
 
 		Returns:
@@ -125,8 +128,8 @@ class Camera(WorldEntity):
 		"""
 
 		return {
-			"topLeft": self.topLeftInPixels,
-			"bottomRight": self.bottomRightInPixels,
+			"topLeft": self.top_left_in_pixels,
+			"bottomRight": self.bottom_right_in_pixels,
 			"width": self._winW,
 			"height": self._winH,
 		}
@@ -135,3 +138,53 @@ class Camera(WorldEntity):
 	@property
 	def center(self):
 		return self._center
+
+
+	# function to check if a pos is off screen
+	def is_off_screen(self, pos, margin):
+		"""Checks if a 2d position is off screen, allowing some room for margin at tthe edges of the screen
+		   (like "bleed margin" would be in print)
+
+		Args:
+			pos (Vector2): postion to check
+			margin (Number): how much overlap off screen to allow
+
+		Returns:
+			bool: True if we're off screen
+		"""
+
+		# reuse our handle function to get bounds
+		bounds = dotdict(self.get_camera_bounds())
+
+		# basically, just add margin to the bounds and check if the passed pos component is outside
+		if(pos.x < (bounds.topLeft.x - margin)):
+			return True
+
+		if(pos.x > (bounds.bottomRight.x + margin)):
+			return True
+
+		if(pos.y < (bounds.topLeft.y - margin)):
+			return True
+
+		if(pos.y > (bounds.bottomRight.y + margin)):
+			return True
+
+		# if we got past all four gaurd clauses, we must be in bounds:
+		return False
+
+
+	# inverse of above:
+	def is_on_screen(self, pos, margin):
+		"""the inverse of is_off_screen: Checks if a 2d position is on screen, allowing some room for margin at the edges
+	       of the screen (like "bleed margin" would be print)
+
+		Args:
+			pos (Vector2): position to check
+			margin (Number): how much overlap offscreen to allow
+
+		Returns:
+			bool: True if position is on screen
+		"""
+
+		# inverse
+		return not self.is_off_screen(pos, margin)

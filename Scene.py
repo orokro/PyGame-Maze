@@ -36,7 +36,7 @@ class Scene:
 
 
 	# method called when we enter this scene
-	def sceneEnter(self):
+	def scene_enter(self):
 		"""Called when we enter this scene (the scene that extends this base class)
 
 		   Main purpose is to be overloaded by child class
@@ -47,7 +47,7 @@ class Scene:
 
 
 	# method called when we exit this scene
-	def sceneExit(self):
+	def scene_exit(self):
 		"""Called when we exit this scene (the scene that extends this base class)
 
 		   Main purpose is to be overloaded by child class

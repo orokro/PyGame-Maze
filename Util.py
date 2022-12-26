@@ -21,7 +21,7 @@ class dotdict(dict):
 
 
 # copied from SO, easy rotate on center script	
-def blitRotateCenter(surface, image, topleft, angle):
+def blit_rotate_center(surface, image, topleft, angle):
 	"""Rotates pygame image surface on center
 
 	Args:

@@ -29,24 +29,24 @@ class EndScreen(Scene):
 
 
 	# method called when we enter this scene
-	def sceneEnter(self):
+	def scene_enter(self):
 		"""Called when we enter this scene
 		"""
 
 		# do super stuffs, if any
-		super().sceneEnter()
+		super().scene_enter()
 
 		# for debug and whatnot
 		print(f"Doing ending screen business...")
 
 
 	# method called when we exit this scene
-	def sceneExit(self):
+	def scene_exit(self):
 		"""Called when we exit this scene
 		"""
 
 		# do super stuffs, if any
-		super().sceneExit()
+		super().scene_exit()
 
 		# for debug and whatnot
 		print(f"Ending scene says buh-bye")

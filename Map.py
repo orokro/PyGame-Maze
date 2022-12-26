@@ -46,14 +46,14 @@ class Map:
 		self._win = win
 
 		# initialize the pygome stuff we'll need (like image tiles, etc)
-		self._setupPygame()
+		self._setup_pygame()
 
 		# None until a map is loaded, after, reference to pygame image surface
 		self._mapImage = None
 
 
 	# initialize pygame stuff in this method to  declutter constructor
-	def _setupPygame(self):
+	def _setup_pygame(self):
 		"""Sets up pygame related objects we'll need for the map renderer, so we can tidy up the constructor
 		"""
 
@@ -66,7 +66,7 @@ class Map:
 
 
 	# public method to load a maze png to use as our map
-	def loadMap(self, pathToMapImage):
+	def load_map(self, pathToMapImage):
 		"""Loads image to use as map
 
 		Args:
@@ -78,7 +78,7 @@ class Map:
 
 
 	# checks our loaded map image for a pixel
-	def getTileAtMapPos(self, pos):
+	def get_tile_at_map_pos(self, pos):
 		"""Checks what tile is at a point on the map.
 
 			We store the levels map in a image file. Checks a pixel _IN_ the image file,
@@ -121,7 +121,7 @@ class Map:
 			
 
 	# similar to getTileAtMapPos function above, but in screen/wolrd coordinates first
-	def getTileAtPixelPos(self, pos):
+	def get_tile_at_pixel_pos(self, pos):
 		"""Simliar to the getTileAtMapPos above, but uses world pixel coordinates instead of our map coords
 
 		Args:
@@ -140,11 +140,11 @@ class Map:
 		y //= Map.TILE_SIZE
 
 		# just reuprose our other function at this point
-		return self.getTileAtMapPos((x, y))
+		return self.get_tile_at_map_pos((x, y))
 
 
 	# draws a tile at a specifc pos
-	def drawTile(self, tileType, pos):
+	def draw_tile(self, tileType, pos):
 		"""Draws a tile for our tile-based map on screen
 
 		Args:
@@ -160,7 +160,7 @@ class Map:
 
 
 	# draws the map based on the current camera positon (and maybe zoom someday)
-	def drawMap(self):
+	def draw_map(self):
 		"""Draws the map based on the camera's current scroll position, etc..
 		"""
 
@@ -189,7 +189,7 @@ class Map:
 		cam = self._scene.camera
 
 		# get the camera's top/left/width/height
-		bounds = cam.getCameraBounds()
+		bounds = cam.get_camera_bounds()
 
 		# decompose object for easier reading after
 		topPx = int(bounds["topLeft"].y)
@@ -228,7 +228,7 @@ class Map:
 				samplePos = (topLeftTileX + x, topLeftTileY + y)
 
 				# check our pixel map and figure out which tile should render for this x/y position
-				tile = self.getTileAtMapPos(samplePos)
+				tile = self.get_tile_at_map_pos(samplePos)
 
 				# get the screen position this tile should be drawn at:
 				tileScreenPos = cameraOffset.copy()
@@ -236,5 +236,5 @@ class Map:
 				tileScreenPos.y += (y * Map.TILE_SIZE)
 
 				# draw the tile
-				self.drawTile(tile, tileScreenPos)
+				self.draw_tile(tile, tileScreenPos)
 				

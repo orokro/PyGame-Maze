@@ -7,7 +7,7 @@
 
 # yup
 import pygame
-from Util import blitRotateCenter
+from Util import blit_rotate_center
 
 # we're gonna extend this
 from WorldEntity import WorldEntity
@@ -30,13 +30,20 @@ class Particle(WorldEntity):
 			initialRot = 0,
 			initialSpeed = 10,
 			cycleCount = 1,
-			cycleLengthInMS = 1000, 
+			cycleLengthInMS = 1000,
+			killWhenOOB = True, 
 			onComplete = None,
 			customUpdate = None,
 			onCollide = None):
 		
 		# give ourself a unique ID for this particle
-		self.id = (Particle.particleIdCounter += 1)
+		Particle.particleIdCounter += 1
+		self.id = Particle.particleIdCounter
+
+		# should we kill with out of bounds of the screen?
+		# use with caution! combined with cycleCount = 0,
+		# could end up with long running / infinte particles out in the void
+		self.killWhenOOB = killWhenOOB
 
 		# save reference to our system & use it's 
 		# call our super constructor
@@ -100,7 +107,7 @@ class Particle(WorldEntity):
 
 			IF that function returns 'True' we should still do the default updates as well
 
-			IF that function returns 'False' then we don't needd any more update logical.
+			IF that function returns 'False' then we don't needd any more update logic.
 		"""
 
 		# check if have an customUpdate funciton:
@@ -112,7 +119,7 @@ class Particle(WorldEntity):
 
 			# like the comment block says above, if we get False as a response, we're done here
 			# so lets GTFO
-			if(updateResult==False)
+			if(updateResult is False):
 				return
 
 		# ----------------------------------------------
@@ -122,7 +129,17 @@ class Particle(WorldEntity):
 		# below this line is whatever the regular logic would have been anyway
 
 		# basically move the partle in the direction its facing, is all we're gonnda do for now
-		self.defaultMove()
+		self.default_move()
+
+		# if we have kill on OoB enabled, check if we should kill ourself
+		if(self.killWhenOOB is True):
+
+			# are we OoB (out of bounds)
+			isOoB = self._scene.camera.is_off_screen(self.pos, 100)
+
+			# if out of bounds, see ya
+			if(isOoB is True):
+				self.kill()
 		
 
 	# this kills the particle
@@ -131,12 +148,12 @@ class Particle(WorldEntity):
 		"""
 
 		# tell our particle system to remove us
-		self._system.killParticle(self)
+		self._system.kill_particle(self)
 	
 
 	# draw ourself
 	def draw(self):
 
 		# draw the particle
-		blitRotateCenter(self._win, self._img, self.pos, self.rot)
+		blit_rotate_center(self._win, self._img, self.pos, self.rot)
 
