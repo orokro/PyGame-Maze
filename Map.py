@@ -24,8 +24,8 @@ import pygame
 class Map:
 
 	# static constants for tiles
-	WALL = 0
-	GROUND = 1
+	GROUND = 0
+	WALL = 1
 	DARK = 2
 
 	# for now our title size will be constant
@@ -59,21 +59,37 @@ class Map:
 
 		# load the varius kinds of tiles we use, this time instead of named, we'll use indicies cuz y not
 		self._images = [
-			pygame.image.load('./img/map/tiles_beeg_stones.png'),
 			pygame.image.load('./img/map/tiles_smol_stones.png'),
+			pygame.image.load('./img/map/tiles_beeg_stones.png'),
 			pygame.image.load('./img/map/tiles_dark_stone.png'),
 		]
 
 
 	# public method to load a maze png to use as our map
 	def loadMap(self, pathToMapImage):
+		"""Loads image to use as map
+
+		Args:
+			pathToMapImage (str): path to image to load
+		"""
 
 		# load the map image:
 		self._mapImage = pygame.image.load(pathToMapImage)
 
 
 	# checks our loaded map image for a pixel
-	def getTileAtPixelPos(self, pos):
+	def getTileAtMapPos(self, pos):
+		"""Checks what tile is at a point on the map.
+
+			We store the levels map in a image file. Checks a pixel _IN_ the image file,
+			NOT in screen coords
+
+		Args:
+			pos (Tuple|Vector2): The post to check
+
+		Returns:
+			Number: tile id at that point
+		"""
 
 		# get x/y depending if a pygameVector2 was passed in, or a tuple
 		x = int(pos.x) if isinstance(pos, pygame.Vector2) else int(pos[0])
@@ -104,8 +120,37 @@ class Map:
 			return Map.GROUND
 			
 
+	# similar to getTileAtMapPos function above, but in screen/wolrd coordinates first
+	def getTileAtPixelPos(self, pos):
+		"""Simliar to the getTileAtMapPos above, but uses world pixel coordinates instead of our map coords
+
+		Args:
+			pos (Tuple|Vector2): either tuple or vector2 of pixel coordinates in game
+
+		Returns:
+			Number: tile that belongs in thatt position
+		"""
+
+		# get x/y depending if a pygameVector2 was passed in, or a tuple
+		x = int(pos.x) if isinstance(pos, pygame.Vector2) else int(pos[0])
+		y = int(pos.y) if isinstance(pos, pygame.Vector2) else int(pos[1])
+
+		# get pos in map pixels
+		x //= Map.TILE_SIZE
+		y //= Map.TILE_SIZE
+
+		# just reuprose our other function at this point
+		return self.getTileAtMapPos((x, y))
+
+
 	# draws a tile at a specifc pos
 	def drawTile(self, tileType, pos):
+		"""Draws a tile for our tile-based map on screen
+
+		Args:
+			tileType (Number): index of tile image to draw
+			pos (Vector2): position on screen to draw
+		"""
 
 		# get tile image to draw from our list
 		tileImg = self._images[tileType]
@@ -116,12 +161,12 @@ class Map:
 
 	# draws the map based on the current camera positon (and maybe zoom someday)
 	def drawMap(self):
+		"""Draws the map based on the camera's current scroll position, etc..
+		"""
 
 		# if we don't have a map loaded yet, gtfo
 		if self._mapImage==None:
 			return
-
-		# math
 
 		"""
 			NOTE: previously we used a different co-ordinate system for the camera / "world"
@@ -138,7 +183,7 @@ class Map:
 
 			For now our tiles are 128x128 px, so we'll use that
 			Someday this comment may need to be updated if we go with dynamic tile sizes at a later date
-		"""
+		"""		
 
 		# for ease of coding, get local copy of camera
 		cam = self._scene.camera
@@ -183,7 +228,7 @@ class Map:
 				samplePos = (topLeftTileX + x, topLeftTileY + y)
 
 				# check our pixel map and figure out which tile should render for this x/y position
-				tile = self.getTileAtPixelPos(samplePos)
+				tile = self.getTileAtMapPos(samplePos)
 
 				# get the screen position this tile should be drawn at:
 				tileScreenPos = cameraOffset.copy()

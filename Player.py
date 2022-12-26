@@ -144,40 +144,72 @@ class Player(WorldEntity):
 		newPos = self.pos - newPosComponent
 
 		# collision check pos
-		self.pos = self._checkCollision(self.pos, newPos)
+		self.pos = self._checkWallCollision(self.pos, newPos)
 
 		# print(self.pos)
 
 	
-	def _checkCollision(self, oldPos, newPos):
+	# checks cardinal directions around player to see if he touched a wall and revert old coodinate if so
+	def _checkWallCollision(self, oldPos, newPos):
+		"""Checks if player collided with a wall tile. This collision will be separate from enemey / particles, etc
 
-		return newPos
+		Args:
+			oldPos (Vector2): original position of player before we attempted to move
+			newPos (Vector2): the new position we're attempting to move into
 
-		if(self._scene.map.getTileAtPixelPos(newPos) != MapRenderer.GROUND):
-			self.colPoints.append(newPos.copy())
-			return oldPos
+		Returns:
+			Vector2: the position after adjusted for potential collisions with walls
+		"""
+
+		# get temporary local reference to map for easier readability
+		map = self._scene.map
+
+		# we will use px and py as "push x" and "push y"
+		# we wll push by the delta, but if delta is 0 we'll use a constant
+		# the reason we do this:
+		# if we use the delta in movement, we'll just push the player back to where they started,
+		# which will visually look like a perfect collision.
+		# however, if the delta is 0, the collider can get stuck in the wall and wont "push" the player out
+		# so instead we'll used a hard coded value incase no delta. This will push the player out, opposite
+		# the direction of the collision point
+		dx = abs(int(newPos.x) - int(oldPos.x))
+		dy = abs(int(newPos.y) - int(oldPos.y))
+		px = dx if (dx!=0) else 10
+		py = dy if (dy!=0) else 10
+
+		# radius to use for collision around the player
+		colisionRadius = 24
 
 		# if either of these are not ground, reset x pos
-		if(self._scene.map.getTileAtPixelPos(newPos + pygame.Vector2(-1.55, 0)) != MapRenderer.GROUND):
-			self.colPoints.append(newPos.copy())
-			newPos.x = oldPos.x
 
-		if(self._scene.map.getTileAtPixelPos(newPos + pygame.Vector2( 1.55, 0)) != MapRenderer.GROUND):
-			self.colPoints.append(newPos.copy())
-			newPos.x = oldPos.x
+		# check just a bit left of the player	
+		left = newPos + pygame.Vector2(-colisionRadius, 0)
+		if(map.getTileAtPixelPos(left) != Map.GROUND):
+			self.colPoints.append(left.copy())
+			newPos.x += px
+
+		# check just right of the player
+		right = newPos + pygame.Vector2( colisionRadius, 0)
+		if(map.getTileAtPixelPos(right) != Map.GROUND):
+			self.colPoints.append(right.copy())
+			newPos.x -= px
 
 		# if either of these are not ground, reset y pos
-		if(self._scene.map.getTileAtPixelPos(newPos + pygame.Vector2(0, -1.55)) != MapRenderer.GROUND):
-			self.colPoints.append(newPos.copy())
-			newPos.y = oldPos.y
 
-		if(self._scene.map.getTileAtPixelPos(newPos + pygame.Vector2(0,  1.55)) != MapRenderer.GROUND):
-			self.colPoints.append(newPos.copy())
-			newPos.y = oldPos.y
+		# check just above the player
+		top = newPos + pygame.Vector2(0, -colisionRadius)
+		if(map.getTileAtPixelPos(top) != Map.GROUND):
+			self.colPoints.append(top.copy())
+			newPos.y += dy
+
+		# check just below the player
+		bottom = newPos + pygame.Vector2(0,  colisionRadius)
+		if(map.getTileAtPixelPos(bottom) != Map.GROUND):
+			self.colPoints.append(bottom.copy())
+			newPos.y -= dy
 
 		# return adjusted pos
 		return newPos
-
 
 
 	# strafe, like move but p e r p e n d i c u l a r
@@ -194,6 +226,8 @@ class Player(WorldEntity):
 
 	# fire gun
 	def fire(self):
+		"""Code goes here for firing the gun
+		"""
 
 		# this'll do for now
 		print("bang!")
@@ -274,19 +308,24 @@ class Player(WorldEntity):
 		surface.blit(rotated_image, new_rect)
 
 
+	# debug function to show collisions as red dots
 	def drawCollisions(self):
+		"""Draws collisions with walls as red dots
+		"""
 
+		# loop over our list of colision point vectors & draw 'em on screen as red circles
 		for colPoint in self.colPoints:
 			sp = self._scene.camera.getScreenPos(colPoint)
-			self._win.set_at((int(sp[0]), int(sp[1])), (255,0,0))
 			pygame.draw.circle(self._win, (255,0,0), (int(sp[0]), int(sp[1])), 5)
 
-
+		# reset array of colisions till next frame
 		self.colPoints = []
 
 
 	# draws player to screen
 	def draw(self):
+		"""Draws the player's character on screen, with animations and all.
+		"""
 
 		# find where on screen we should be relative to the camera
 		screenPos = self._scene.camera.getScreenPos(self.pos)
