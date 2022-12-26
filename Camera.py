@@ -155,18 +155,32 @@ class Camera(WorldEntity):
 
 		# reuse our handle function to get bounds
 		bounds = dotdict(self.get_camera_bounds())
+		
+		# def printBounds():
+		# 	print(f"{bounds.topLeft.x}, {bounds.topLeft.y}, {bounds.bottomRight.x}, {bounds.bottomRight.y}")
+		# 	print(f"player pos {self._scene.player.pos.x}, {self._scene.player.pos.y}")
+		# 	print(f"Particle pos {pos.x}, {pos.y}")
 
 		# basically, just add margin to the bounds and check if the passed pos component is outside
 		if pos.x < (bounds.topLeft.x - margin):
+			# print('oob left')
+			# printBounds()
 			return True
 
 		if pos.x > (bounds.bottomRight.x + margin):
+			# print('oob right')
+			# printBounds()
 			return True
 
 		if pos.y < (bounds.topLeft.y - margin):
+			# print(f'x: {pos.y} oob-top {bounds.topLeft.y}  m:{bounds.topLeft.y-margin}')
+			# print('oob top')
+			# printBounds()
 			return True
 
 		if pos.y > (bounds.bottomRight.y + margin):
+			# printBounds()
+			# print('oob bottom')
 			return True
 
 		# if we got past all four gaurd clauses, we must be in bounds:

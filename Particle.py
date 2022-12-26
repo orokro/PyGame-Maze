@@ -155,5 +155,6 @@ class Particle(WorldEntity):
 	def draw(self):
 
 		# draw the particle
-		blit_rotate_center(self._win, self._img, self.pos, self.rot)
+		screenPos = self._system.cam.get_screen_pos(self.pos)
+		blit_rotate_center(self._win, self._img, screenPos, self.rot)
 

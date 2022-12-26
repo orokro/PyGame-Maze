@@ -73,7 +73,7 @@ class GameScreen(Scene):
 
 		# collect our variables
 		pType = ParticleSystem.TYPES.BULLET
-		pos = self.camera.get_screen_pos(self.player.handPos)
+		pos = self.player.handPos
 		angle = self.player.rot
 		speed = 10
 

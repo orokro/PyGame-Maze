@@ -47,6 +47,9 @@ class ParticleSystem:
 		self._scene = scene
 		self._win = win
 
+		# break out camera cuz our particles will need it for rendering
+		self.cam = self._scene.camera
+
 		# this list will contain our active particles as they're spawned and etc
 		self.particles = []
 
@@ -79,9 +82,9 @@ class ParticleSystem:
 			self.particles.remove(particle)
 
 		# for debug
-		print(f"Active Particles: {len(self.particles)}")
+		# print(f"Active Particles: {len(self.particles)}")
 	
-	
+
 	# updates all particles that are spawned
 	def update(self):
 		"""Basically just calls update on all the parctles spawned and in our particles[] list
