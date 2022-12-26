@@ -200,13 +200,13 @@ class Player(WorldEntity):
 		top = newPos + pygame.Vector2(0, -colisionRadius)
 		if(map.getTileAtPixelPos(top) != Map.GROUND):
 			self.colPoints.append(top.copy())
-			newPos.y += dy
+			newPos.y += py
 
 		# check just below the player
 		bottom = newPos + pygame.Vector2(0,  colisionRadius)
 		if(map.getTileAtPixelPos(bottom) != Map.GROUND):
 			self.colPoints.append(bottom.copy())
-			newPos.y -= dy
+			newPos.y -= py
 
 		# return adjusted pos
 		return newPos

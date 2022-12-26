@@ -46,7 +46,7 @@ class MazeGame:
 		self._setupScenes()
 
 		# for debug: skip to game screen (past title screen)
-		self._sceneMgr.switchScene(1)
+		# self._sceneMgr.switchScene(1)
 
 		# true until user quits or w/e
 		self._run = True

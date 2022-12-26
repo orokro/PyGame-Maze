@@ -11,6 +11,9 @@
 	So lets make a base class here for world entities, just 'cause
 """
 
+# for misc maffs
+import math
+
 # for vector maffs
 import pygame
 
@@ -40,4 +43,49 @@ class WorldEntity:
 		self.rot = rot
 		self.width = w
 		self.height = h
+
+		# speed (might not be used by all subclasses)
+		self.speed = 1
+
+	
+	# moves ourself by our self-defined variables
+	def defaultMove(self):
+		"""Basically, a light weight wrapper for moveByAngleAndMagnitute to use our self props
+		"""
+
+		# call our gernci move by angle/magnitude method with our self params
+		self.moveByAngleAndMagnitute(self.rot, self.speed)
+
+
+	# helper function for angle sin/cos movement
+	def moveByAngleAndMagnitute(self, angle, magnitute, returnInsteadOfApply = False):
+		"""Moves our pos by an Angle (in degrees) and by some magnitute
+
+		Args:
+			angle (Number): angle to move towards
+			magnitute (Number): radius in world pixels
+			returnInsteadOfApply (bool, optional): Set true to return movement x/y instead of applying immediately. Defaults to False.
+
+		Returns:
+			Vector2: either, our old pos, OR the movement compoinent
+		"""
+
+		# convert to radians
+		angleInRadians = angle * (math.pi/180.0)
+
+		# compute new position component as Vector2
+		moveComponent = pygame.Vector2(math.sin(angleInRadians) * magnitute, math.cos(angleInRadians) * magnitute)
+
+		# if we're asked to return the compoent, isntead of applying, do so now
+		if(returnInsteadOfApply==True):
+			return moveComponent
+
+		# save old position
+		oldPos = self.pos.copy()
+
+		# update our position with this component
+		self.pos -= moveComponent
+
+		# return the old position
+		return oldPos
 
