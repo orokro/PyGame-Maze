@@ -22,6 +22,9 @@ import pygame
 # gonna need this for collision
 from Map import Map
 
+# useful simple events system for others to subscribe to
+from Events import Events
+
 # we gonna extend this
 from WorldEntity import WorldEntity
 
@@ -42,6 +45,9 @@ class Player(WorldEntity):
 
 		# call our super constructor
 		super().__init__(scene, win, initialX, initialY, initialRot)
+
+		# create some public events for others to subscribe to
+		self.events = Events(["onFire", "onDie", "onHitWall"])
 
 		# set some of our player specific properties
 		self._health = 100
@@ -231,8 +237,8 @@ class Player(WorldEntity):
 		"""Code goes here for firing the gun
 		"""
 
-		# this'll do for now
-		print("bang!")
+		# for now, just fire our event
+		self.events.onFire.fire(self)
 
 
 	# public method called from our Scene to have the player handle input
@@ -363,7 +369,8 @@ class Player(WorldEntity):
 		# (this is because the gun is its own sprite in the players hand, so its X/Y is the hand-pos)
 		gunRadius = 60 * torsoScalar
 		gunRotationFromPlayer = (self.rot + torsoRotOffset + 140) * (math.pi / 180)
-		gunPos = screenPos + pygame.Vector2(math.sin(gunRotationFromPlayer) * gunRadius, math.cos(gunRotationFromPlayer) * gunRadius)
+		self._gunPos = pygame.Vector2(math.sin(gunRotationFromPlayer) * gunRadius, math.cos(gunRotationFromPlayer) * gunRadius)
+		gunPos = screenPos + self._gunPos
 
 		# rotate bit to screen. ORDER MATTERS! bottom-to-top
 		self.blit_rotate_center(self._win, self._images["feet"], screenPos-self._feetOffset, self.rot+feetRotOffset)

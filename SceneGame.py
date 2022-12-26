@@ -50,6 +50,29 @@ class GameScreen(Scene):
 		# we'll hard code title in this file, we dont need to pass it in
 		super().__init__(game, win, "Game Play Screen")
 
+		# subscribe to various events we might care about
+		self.subscribeEvents()
+
+
+	# set up event handlers for any objects we care to listen to
+	def subscribeEvents(self):
+		"""Some objects may fire events. Well subcribe to most or all of them here, for tidyness sake
+		"""
+
+		# player has event for firing...
+		self.player.events.onFire.add_listener(self.shoot)
+
+
+	# event handler for when player fires his gun
+	def shoot(self, player):
+		"""Handle event when player fires his gun
+
+		Args:
+			player (Player): the player that fired
+		"""
+
+		print('biggity biggity bang!')
+
 
 	# method called when we enter this scene
 	def scene_enter(self):
